@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { eurosToCents } from "./money";
 import { BASELINES, ENERGIES, FLUID_TYPES } from "./labels";
 
 const text = (max: number) => z.string().trim().min(1).max(max);
@@ -11,7 +12,14 @@ const optionalText = (max: number) =>
 const upper = (max: number) => z.string().trim().toUpperCase().min(1).max(max);
 
 export const id = z.coerce.number().int().positive();
-const isoDate = z.iso.date();
+export const isoDate = z.iso.date();
+
+/** Non-negative integer km, as typed. */
+export const km = z
+  .string()
+  .trim()
+  .regex(/^\d{1,9}$/)
+  .transform(Number);
 
 /** Blank → null, otherwise a positive integer. */
 const optionalPositiveInt = z
@@ -82,4 +90,69 @@ export const partUrl = z.object({
   // http(s) only: rejects `javascript:` and the like.
   url: z.url({ protocol: /^https?$/ }).max(2000),
   label: optionalText(200),
+});
+
+export const reading = z.object({ date: isoDate, displayedKm: km });
+
+export const replacement = z.object({
+  date: isoDate,
+  oldCounterKm: km,
+  newCounterKm: km,
+});
+
+const amount = z
+  .string()
+  .refine((v) => eurosToCents(v) !== null)
+  .transform((v) => eurosToCents(v)!);
+
+const partLine = z
+  .object({
+    partId: id.nullable(),
+    label: optionalText(200),
+    quantity: z
+      .string()
+      .transform((v) => Number(v.trim().replace(",", ".")))
+      .pipe(z.number().positive().max(100_000)),
+    amount,
+  })
+  .refine((l) => l.partId !== null || l.label !== null, {
+    error: "Renseignez une pièce ou un libellé pour chaque ligne.",
+  })
+  .transform(({ amount: amountCents, ...l }) => ({
+    ...l,
+    label: l.partId === null ? l.label : null,
+    amountCents,
+  }));
+
+/** Content of the intervention form's hidden `payload` field (JSON). */
+export const interventionPayload = z.object({
+  date: isoDate,
+  displayedKm: km,
+  provider: text(200),
+  notes: optionalText(2000),
+  labor: amount,
+  ops: z
+    .array(
+      z.object({
+        operationTypeId: id,
+        detail: optionalText(500),
+        lines: z.array(partLine).max(100),
+      }),
+    )
+    .min(1, { error: "Renseignez au moins une opération." })
+    .max(50),
+});
+
+export const interventionForm = z.object({
+  payload: z
+    .string()
+    .transform((raw, ctx) => {
+      try {
+        return JSON.parse(raw) as unknown;
+      } catch {
+        ctx.addIssue({ code: "custom", message: "invalid" });
+        return z.NEVER;
+      }
+    })
+    .pipe(interventionPayload),
 });

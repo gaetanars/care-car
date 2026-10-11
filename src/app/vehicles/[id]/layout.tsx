@@ -1,5 +1,6 @@
 import { Suspense } from "react";
 import Link from "next/link";
+import { buttonVariants } from "@/components/ui/button";
 import { VehicleTabs } from "../tabs";
 import { loadVehicle } from "./load";
 
@@ -19,6 +20,14 @@ async function Header({ params }: { params: Promise<{ id: string }> }) {
         <p role="status" className="bg-muted rounded-md px-3 py-2 text-sm">
           Archivé — lecture seule.
         </p>
+      )}
+      {!vehicle.archivedAt && (
+        <Link
+          href={`/vehicles/${vehicle.id}/readings`}
+          className={buttonVariants({ variant: "outline", size: "sm" })}
+        >
+          + Relevé
+        </Link>
       )}
       <VehicleTabs vehicleId={vehicle.id} />
     </>

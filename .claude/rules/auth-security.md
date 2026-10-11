@@ -12,7 +12,7 @@ paths:
 - `user.allowed` vérifié à chaque requête, pas seulement à la connexion. Le retrait d'un utilisateur supprime ses sessions.
 - Session 30 jours glissants.
 - Jeton iCal : ≥ 256 bits d'aléa, stocké haché, comparé en temps constant, régénérable (§9).
-- Fichiers : type vérifié par magic bytes, 20 Mo max, servis uniquement après contrôle du propriétaire, jamais en statique (§8). Images converties en PDF au dépôt.
+- Fichiers : PDF uniquement, type vérifié par magic bytes, 10 Mo max par envoi, servis uniquement après contrôle du propriétaire, jamais en statique (§8).
 - Validation serveur de toute entrée (types, bornes, tailles) avec `zod`.
 - Aucun secret dans le dépôt : variables d'environnement uniquement.
 - Gotenberg n'est joignable que sur le réseau interne.

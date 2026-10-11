@@ -23,8 +23,10 @@ Critères communs à chaque jalon : `pnpm check` vert, E2E des parcours touchés
   - Livré : CRUD véhicule (énergie non modifiable), archivage/désarchivage (écritures refusées côté data si archivé), suppression avec immatriculation exacte, plan (une ligne par type d'opération, index unique), fluides, pièces + URLs http(s).
   - Décision : la contre-visite n'est pas suivie, seule la date du CT initial compte (§6.5) ; le type est exclu de l'ajout au plan. À reprendre au jalon 5 (saisie d'intervention) et dans le SPEC §6.6.
   - Reste : onglets Synthèse, Carnet, Relevés, Analyse (jalons 5, 6, 9) ; la page d'accueil liste provisoirement les véhicules (tableau de bord au jalon 6) ; `/vehicles/<inconnu>` affiche « Page introuvable » mais avec statut HTTP 200 (notFound levé sous `<Suspense>`, cacheComponents).
-- [ ] **5. Relevés, interventions, factures** (§6.1, §8)
-  - Sortie : factures en PDF (images converties), magic bytes, 20 Mo, accès après contrôle du propriétaire ; suppression d'un véhicule ou d'une intervention supprime aussi les fichiers sur disque (§5).
+- [x] **5. Relevés, interventions, factures** (§6.1, §8)
+  - Sortie : factures en PDF uniquement (conversion d'images reportée), magic bytes `%PDF-`, 10 Mo par envoi, accès après contrôle du propriétaire ; suppression d'un véhicule ou d'une intervention supprime aussi les fichiers sur disque (§5).
+  - Livré : relevés, changements de compteur, interventions (création, édition, suppression), factures PDF, avertissement de km incohérent, contre-visite saisissable sans effet sur l'échéance.
+  - Reste : raccourci « + Relevé » depuis le tableau de bord (jalon 6) ; conversion d'images en PDF reportée (SPEC §2.2, §14 #11).
 - [ ] **6. Tableau de bord + synthèse** (§7)
 - [ ] **7. Flux iCal** (§9) — `VALARM` J-28, jeton ≥ 256 bits haché.
 - [ ] **8. Export PDF du carnet** (§10) — via Gotenberg.

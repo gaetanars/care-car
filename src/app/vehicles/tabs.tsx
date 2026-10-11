@@ -8,6 +8,8 @@ export function VehicleTabs({ vehicleId }: { vehicleId: number }) {
   const base = `/vehicles/${vehicleId}`;
   const tabs = [
     { href: base, label: "Identité" },
+    { href: `${base}/interventions`, label: "Carnet" },
+    { href: `${base}/readings`, label: "Relevés" },
     { href: `${base}/plan`, label: "Plan d'entretien" },
     { href: `${base}/parts`, label: "Pièces" },
     { href: `${base}/fluids`, label: "Fluides" },
@@ -21,7 +23,12 @@ export function VehicleTabs({ vehicleId }: { vehicleId: number }) {
         <Link
           key={tab.href}
           href={tab.href}
-          aria-current={pathname === tab.href ? "page" : undefined}
+          aria-current={
+            pathname === tab.href ||
+            (tab.href !== base && pathname.startsWith(`${tab.href}/`))
+              ? "page"
+              : undefined
+          }
           className="rounded-md px-3 py-1.5 text-sm whitespace-nowrap aria-[current=page]:bg-muted aria-[current=page]:font-medium"
         >
           {tab.label}

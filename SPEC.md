@@ -38,6 +38,7 @@ plan d'entretien périodique, journal des interventions avec coûts et factures,
 | Notifications email / push | Le flux iCal couvre les alertes |
 | Recherche par immatriculation (SIV), plans constructeurs automatiques | Saisie manuelle |
 | Multilingue | Interface en français uniquement |
+| Dépôt d'images / photo convertie en PDF | Reporté : factures en PDF uniquement en V1 (§8) |
 
 ## 3. Glossaire (terminologie de l'interface)
 
@@ -182,7 +183,7 @@ Les seuils (28 jours, 1 000 km) sont des constantes de l'application.
 - Sur un véhicule, l'utilisateur peut :
   - modifier les intervalles d'une ligne ;
   - supprimer une ligne ;
-  - ajouter une ligne à partir de n'importe quel type d'opération actif.
+  - ajouter une ligne à partir de n'importe quel type d'opération actif, sauf la contre-visite CT (§6.5).
 - `baseline` vaut `unknown` par défaut, sauf pour le contrôle technique.
 
 ### 6.7 Coûts
@@ -206,7 +207,7 @@ Conception mobile d'abord. Toutes les saisies doivent être réalisables d'une m
 | **Véhicule › Pièces** | Banque de pièces de référence avec URLs fournisseurs (liens cliquables). |
 | **Véhicule › Fluides** | Liste des fluides. |
 | **Véhicule › Analyse** | Analytique du véhicule (§11). |
-| **Saisie d'une intervention** | Date, km affiché, prestataire (saisie libre avec suggestion des prestataires déjà utilisés, « Moi-même » proposé), notes. N opérations : type (catalogue), détail, lignes de pièces (pièce de la banque ou libellé libre, quantité, montant). MO. Factures (sélection de fichiers ou appareil photo). Total calculé en direct. |
+| **Saisie d'une intervention** | Date, km affiché, prestataire (saisie libre avec suggestion des prestataires déjà utilisés, « Moi-même » proposé), notes. N opérations : type (catalogue), détail, lignes de pièces (pièce de la banque ou libellé libre, quantité, montant). MO. Factures (sélection de fichiers PDF). Total calculé en direct. |
 | **Saisie rapide d'un relevé** | Date (défaut : aujourd'hui) et km, accessible en un geste depuis le tableau de bord et la fiche véhicule. |
 | **Analyse globale** | Analytique tous véhicules (§11). |
 | **Paramètres** | URL du flux iCal (copie, régénération). |
@@ -216,12 +217,12 @@ Conception mobile d'abord. Toutes les saisies doivent être réalisables d'une m
 ### Contrôles de saisie
 
 - Un km de relevé ou d'intervention incohérent avec les points voisins (km réel décroissant dans le temps) déclenche un avertissement non bloquant : l'utilisateur doit le confirmer explicitement, la saisie n'est jamais refusée.
-- Fichiers : PDF, JPEG, PNG, au plus 20 Mo par fichier, type vérifié sur le contenu (magic bytes).
+- Fichiers : PDF uniquement, 10 Mo au plus par envoi (total des fichiers d'une soumission), type vérifié sur le contenu (magic bytes).
 
 ## 8. Factures jointes
 
 - Stockage sur le volume `DATA_DIR/files/<vehicle_id>/<intervention_id>/`.
-- Les images sont converties en PDF dès le dépôt. Seul le PDF est conservé, et il est référencé par `stored_pdf_path`.
+- V1 : PDF uniquement, conversion des images reportée. Le PDF est référencé par `stored_pdf_path` (chemin relatif à `DATA_DIR/files`).
 - Une intervention peut avoir 0 à N factures (pièces et/ou garage).
 - Consultation dans le navigateur et téléchargement depuis la fiche de l'intervention.
 
@@ -341,3 +342,4 @@ Aucune tâche planifiée ni worker en V1 : échéances, statuts et flux iCal son
 | 8 | Import CSV de l'existant | Abandonné : l'export ne contient aucun montant et ne permet pas de créer un véhicule seul ; reprise par saisie manuelle de 3 véhicules (§12). |
 | 9 | `VALARM` | Client cible Apple Calendar : `VALARM` conservé, pas de second événement (§9) |
 | 10 | Code des types d'opération | Colonne `operation_type.code` (nullable, unique) : le moteur identifie le CT par ce code, jamais par id ni nom. Ajout de mois ramené au dernier jour du mois cible. Date projetée en arrondi bas, sans borne. km/jour ≤ 0 ⇒ pas de projection (§5, §6.2, §6.3, §6.5). |
+| 11 | Factures et contre-visite | PDF seul, 10 Mo par envoi, conversion d'images reportée (§8). Contre-visite CT saisissable dans une intervention (coût tracé), sans effet sur l'échéance, jamais ajoutée au plan (§6.5, §6.6) |

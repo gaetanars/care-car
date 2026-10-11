@@ -1,5 +1,10 @@
 import { describe, expect, it } from "vitest";
-import { currentPoint, mileagePoints, realKm } from "./odometer";
+import {
+  currentPoint,
+  isMileageInconsistent,
+  mileagePoints,
+  realKm,
+} from "./odometer";
 import type { Intervention, OdometerReplacement } from "./types";
 
 // Counter replaced on 2026-06-01: old counter showed 120 000, new one starts at 100 (offset +119 900).
@@ -73,5 +78,62 @@ describe("mileagePoints / currentPoint", () => {
         { date: "2026-06-01", realKm: 900 },
       ]),
     ).toEqual({ date: "2026-07-01", realKm: 300 });
+  });
+});
+
+describe("isMileageInconsistent (SPEC §7)", () => {
+  const point = { date: "2026-03-01", realKm: 10_000 };
+
+  it("is consistent with no other point", () => {
+    expect(isMileageInconsistent(point, [])).toBe(false);
+  });
+
+  it("flags an earlier point with a higher km", () => {
+    expect(
+      isMileageInconsistent(point, [{ date: "2026-02-01", realKm: 10_500 }]),
+    ).toBe(true);
+  });
+
+  it("accepts an earlier point with a lower or equal km", () => {
+    expect(
+      isMileageInconsistent(point, [
+        { date: "2026-02-01", realKm: 9000 },
+        { date: "2026-02-02", realKm: 10_000 },
+      ]),
+    ).toBe(false);
+  });
+
+  it("flags a later point with a lower km", () => {
+    expect(
+      isMileageInconsistent(point, [{ date: "2026-04-01", realKm: 9000 }]),
+    ).toBe(true);
+  });
+
+  it("accepts a later point with a higher or equal km", () => {
+    expect(
+      isMileageInconsistent(point, [
+        { date: "2026-04-01", realKm: 11_000 },
+        { date: "2026-04-02", realKm: 10_000 },
+      ]),
+    ).toBe(false);
+  });
+
+  it("puts no constraint on the same date", () => {
+    expect(
+      isMileageInconsistent(point, [
+        { date: "2026-03-01", realKm: 5000 },
+        { date: "2026-03-01", realKm: 15_000 },
+      ]),
+    ).toBe(false);
+  });
+
+  it("works on real km, so a counter change is not an inconsistency", () => {
+    // Counter replaced: displayed 119 900 then 150 → real km keeps increasing.
+    const before = { date: "2026-05-01", realKm: 119_900 };
+    const after = {
+      date: "2026-07-01",
+      realKm: realKm("2026-07-01", 1100, [change]),
+    };
+    expect(isMileageInconsistent(after, [before])).toBe(false);
   });
 });

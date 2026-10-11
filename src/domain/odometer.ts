@@ -1,5 +1,4 @@
 import type {
-  Intervention,
   MileagePoint,
   OdometerReading,
   OdometerReplacement,
@@ -24,7 +23,7 @@ export function comparePoints(a: MileagePoint, b: MileagePoint): number {
 /** Readings + intervention mileages, as real km, sorted by `comparePoints`. */
 export function mileagePoints(
   readings: OdometerReading[],
-  interventions: Intervention[],
+  interventions: OdometerReading[],
   replacements: OdometerReplacement[],
 ): MileagePoint[] {
   return [...readings, ...interventions]
@@ -38,4 +37,20 @@ export function mileagePoints(
 /** Most recent point; on the same date, the highest real km. */
 export function currentPoint(points: MileagePoint[]): MileagePoint | null {
   return [...points].sort(comparePoints).at(-1) ?? null;
+}
+
+/**
+ * True if real km decreases over time against `others`: a strictly earlier
+ * point higher, or a strictly later point lower. Same date: no constraint
+ * (SPEC §6.1, §7).
+ */
+export function isMileageInconsistent(
+  point: MileagePoint,
+  others: MileagePoint[],
+): boolean {
+  return others.some(
+    (o) =>
+      (o.date < point.date && o.realKm > point.realKm) ||
+      (o.date > point.date && o.realKm < point.realKm),
+  );
 }

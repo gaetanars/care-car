@@ -2,8 +2,8 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import type { z } from "zod";
 import { requireUser } from "@/server/auth/session";
+import { removeVehicleFiles } from "@/server/services/files";
 import { createFluid, deleteFluid, updateFluid } from "@/server/data/fluids";
 import {
   addPartUrl,
@@ -24,26 +24,8 @@ import {
   updateVehicle,
 } from "@/server/data/vehicles";
 import type { FormState } from "./action-form";
+import { INVALID, NOT_FOUND, parse, refresh, today } from "./form-utils";
 import * as schemas from "./schemas";
-
-const INVALID = "Saisie invalide : vérifiez les champs.";
-const NOT_FOUND = "Véhicule introuvable ou archivé.";
-
-/** Zod validation of a form: the first issue message, or the parsed data. */
-function parse<T extends z.ZodType>(
-  schema: T,
-  formData: FormData,
-): { data: z.output<T> } | { error: string } {
-  const result = schema.safeParse(Object.fromEntries(formData));
-  if (result.success) return { data: result.data };
-  const message = result.error.issues[0]?.message ?? "";
-  return { error: message.startsWith("Renseignez") ? message : INVALID };
-}
-
-const today = () => new Intl.DateTimeFormat("sv-SE").format(new Date());
-
-const refresh = (vehicleId: number) =>
-  revalidatePath(`/vehicles/${vehicleId}`, "layout");
 
 /** `vehicleId` only drives revalidation; authorization is the data layer's. */
 const vehicleIdOf = (formData: FormData) =>
@@ -126,6 +108,8 @@ export async function deleteVehicleAction(
     return { error: "L'immatriculation saisie ne correspond pas." };
   }
   deleteVehicle(user.id, id.data);
+  // Database first: at worst an orphan folder, never a dangling reference.
+  await removeVehicleFiles(id.data);
   revalidatePath("/", "layout");
   redirect("/");
 }

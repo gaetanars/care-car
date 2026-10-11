@@ -144,7 +144,7 @@ export function unarchiveVehicle(ownerId: string, vehicleId: number): boolean {
   );
 }
 
-/** Cascades to all children in the database; invoice files are removed at milestone 5. */
+/** Cascades to all children in the database; the caller removes the invoice files (`removeVehicleFiles`). */
 export function deleteVehicle(ownerId: string, vehicleId: number): boolean {
   return (
     getDb().delete(vehicle).where(owned(ownerId, vehicleId)).run().changes > 0

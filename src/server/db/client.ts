@@ -4,6 +4,7 @@ import { join } from "node:path";
 import Database from "better-sqlite3";
 import { drizzle } from "drizzle-orm/better-sqlite3";
 import { migrate } from "drizzle-orm/better-sqlite3/migrator";
+import { dataDir } from "../data-dir";
 import * as schema from "./schema";
 
 export type Db = ReturnType<typeof createDb>;
@@ -21,10 +22,6 @@ export function applyMigrations(
   folder = join(process.cwd(), "drizzle"),
 ) {
   migrate(db, { migrationsFolder: folder });
-}
-
-export function dataDir(): string {
-  return process.env.DATA_DIR ?? join(process.cwd(), "data");
 }
 
 let instance: Db | undefined;

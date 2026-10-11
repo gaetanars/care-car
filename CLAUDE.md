@@ -26,7 +26,7 @@ Suivi : `docs/ROADMAP.md` (jalons, critères de sortie). Un jalon se réalise av
 - Montants en centimes entiers TTC ; dates ISO `YYYY-MM-DD` (§5).
 - Km saisi = km **affiché** ; tous les calculs utilisent le km **réel** (§6.1).
 - MO jamais répartie entre opérations ; analyses par type d'opération = pièces seules (§6.7).
-- Factures : images converties en PDF au dépôt, seul le PDF est conservé ; magic bytes ; 20 Mo (§8).
+- Factures : PDF uniquement (conversion d'images reportée) ; magic bytes ; 10 Mo par envoi (§8).
 - Seuils 28 jours / 1 000 km = constantes (`src/domain/constants.ts`).
 - Pas de worker ni de tâche planifiée ; pas de serverless (SQLite) (§13.1).
 - Contrôle technique : contre-visite sans effet ; 1re échéance = immatriculation + 48 mois, puis 24 (§6.5).
