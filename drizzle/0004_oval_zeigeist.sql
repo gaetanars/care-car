@@ -1,0 +1,1 @@
+CREATE UNIQUE INDEX `calendar_token_hash_unique` ON `calendar_token` (`token_hash`);

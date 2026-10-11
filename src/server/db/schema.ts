@@ -370,12 +370,16 @@ export const invoiceFile = sqliteTable(
   (t) => [index("invoice_file_intervention_idx").on(t.interventionId)],
 );
 
-export const calendarToken = sqliteTable("calendar_token", {
-  id: id(),
-  userId: text("user_id")
-    .notNull()
-    .references(() => user.id, { onDelete: "cascade" }),
-  tokenHash: text("token_hash").notNull(),
-  createdAt: createdAt(),
-  revokedAt: integer("revoked_at", { mode: "timestamp_ms" }),
-});
+export const calendarToken = sqliteTable(
+  "calendar_token",
+  {
+    id: id(),
+    userId: text("user_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    tokenHash: text("token_hash").notNull(),
+    createdAt: createdAt(),
+    revokedAt: integer("revoked_at", { mode: "timestamp_ms" }),
+  },
+  (t) => [uniqueIndex("calendar_token_hash_unique").on(t.tokenHash)],
+);

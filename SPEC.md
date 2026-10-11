@@ -212,7 +212,7 @@ Conception mobile d'abord. Toutes les saisies doivent être réalisables d'une m
 | **Saisie d'une intervention** | Date, km affiché, prestataire (saisie libre avec suggestion des prestataires déjà utilisés, « Moi-même » proposé), notes. N opérations : type (catalogue), détail, lignes de pièces (pièce de la banque ou libellé libre, quantité, montant). MO. Factures (sélection de fichiers PDF). Total calculé en direct. |
 | **Saisie rapide d'un relevé** | Date (défaut : aujourd'hui) et km, accessible en un geste depuis le tableau de bord et la fiche véhicule. |
 | **Analyse globale** | Analytique tous véhicules (§11). |
-| **Paramètres** | URL du flux iCal (copie, régénération). |
+| **Paramètres** | URL du flux iCal (affichée et copiable à la génération uniquement, régénération). |
 | **Admin** | Liste blanche, catalogue des types d'opérations, plans types par énergie. |
 | **Véhicules archivés** | Liste en lecture seule, export PDF disponible, désarchivage possible. |
 

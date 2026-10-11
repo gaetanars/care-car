@@ -1,21 +1,18 @@
 import { Badge } from "@/components/ui/badge";
+import { DUE_STATUS_LABELS } from "@/domain/status";
 import type { DueStatus } from "@/domain/types";
 
-const STATUS: Record<
+const VARIANT: Record<
   DueStatus,
-  {
-    label: string;
-    variant: "destructive" | "default" | "secondary" | "outline";
-  }
+  "destructive" | "default" | "secondary" | "outline"
 > = {
-  a_renseigner: { label: "À renseigner", variant: "outline" },
-  en_retard: { label: "En retard", variant: "destructive" },
-  a_prevoir: { label: "À prévoir", variant: "default" },
-  ok: { label: "OK", variant: "secondary" },
+  a_renseigner: "outline",
+  en_retard: "destructive",
+  a_prevoir: "default",
+  ok: "secondary",
 };
 
 /** Status badge, labels of SPEC §6.4. */
 export function DueStatusBadge({ status }: { status: DueStatus }) {
-  const { label, variant } = STATUS[status];
-  return <Badge variant={variant}>{label}</Badge>;
+  return <Badge variant={VARIANT[status]}>{DUE_STATUS_LABELS[status]}</Badge>;
 }

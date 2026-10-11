@@ -136,6 +136,9 @@ async function Home() {
       <Link href="/vehicles/archived" className="underline">
         Véhicules archivés
       </Link>
+      <Link href="/account" className="underline">
+        Paramètres
+      </Link>
       {user.role === "admin" && (
         <Link href="/admin" className="underline">
           Administration

@@ -31,6 +31,8 @@ Critères communs à chaque jalon : `pnpm check` vert, E2E des parcours touchés
   - Inclut l'écran Admin du catalogue et des plans types (§2.1, §4, §7), reporté du jalon 3.
   - Livré : tableau de bord (cartes, « + Relevé », liste des échéances hors « À renseigner »), Synthèse véhicule en lecture seule (édition sur `/vehicles/[id]/edit`), admin catalogue (types à code verrouillés) et plans types (index unique `(plan_template_id, operation_type_id)`).
   - Toujours ouvert : `/vehicles/<inconnu>`, `/vehicles/<inconnu>/edit` et les pages admin pour un non-admin répondent 200 (notFound sous `<Suspense>`).
-- [ ] **7. Flux iCal** (§9) — `VALARM` J-28, jeton ≥ 256 bits haché.
+- [x] **7. Flux iCal** (§9) — `VALARM` J-28, jeton ≥ 256 bits haché.
+  - Livré : `/calendar/<token>.ics` (journée entière, UID stable, `VALARM` J-28, empreinte SHA-256 + index unique, comparaison en temps constant, `user.allowed` revérifié), écran Paramètres (`/account`) avec génération/régénération, URL affichée une seule fois (SPEC §7 ajusté), lien depuis le tableau de bord.
+  - Reste : vérification manuelle de l'abonnement dans Apple Calendar (alerte J-28 visible).
 - [ ] **8. Export PDF du carnet** (§10) — pdf-lib (fusion) + génération de la fiche côté app.
 - [ ] **9. Analytique** (§11) — pièces par catégorie, MO séparée non ventilée.
