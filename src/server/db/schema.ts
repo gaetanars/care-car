@@ -171,7 +171,11 @@ export const planTemplateItem = sqliteTable(
       "interval_required",
       sql`${t.intervalKm} is not null or ${t.intervalMonths} is not null`,
     ),
-    index("plan_template_item_template_idx").on(t.planTemplateId),
+    // One line per operation type; the prefix also serves lookups by template.
+    uniqueIndex("plan_template_item_template_operation_type_unique").on(
+      t.planTemplateId,
+      t.operationTypeId,
+    ),
   ],
 );
 

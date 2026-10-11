@@ -17,5 +17,8 @@ export function parse<T extends z.ZodType>(
 
 export const today = () => new Intl.DateTimeFormat("sv-SE").format(new Date());
 
-export const refresh = (vehicleId: number) =>
+/** Vehicle pages and the dashboard, which both show dues and mileage. */
+export const refresh = (vehicleId: number) => {
   revalidatePath(`/vehicles/${vehicleId}`, "layout");
+  revalidatePath("/");
+};

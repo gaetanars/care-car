@@ -29,3 +29,10 @@ export const BASELINE_LABELS: Record<(typeof BASELINES)[number], string> = {
 
 export const selectClass =
   "h-9 w-full rounded-md border border-input bg-transparent px-3 text-sm";
+
+export const CATEGORIES = ["entretien", "reparation", "reglementaire"] as const;
+export const CATEGORY_LABELS: Record<(typeof CATEGORIES)[number], string> = {
+  entretien: "Entretien",
+  reparation: "Réparation",
+  reglementaire: "Réglementaire",
+};

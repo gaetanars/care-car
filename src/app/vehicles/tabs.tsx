@@ -7,7 +7,7 @@ export function VehicleTabs({ vehicleId }: { vehicleId: number }) {
   const pathname = usePathname();
   const base = `/vehicles/${vehicleId}`;
   const tabs = [
-    { href: base, label: "Identité" },
+    { href: base, label: "Synthèse" },
     { href: `${base}/interventions`, label: "Carnet" },
     { href: `${base}/readings`, label: "Relevés" },
     { href: `${base}/plan`, label: "Plan d'entretien" },

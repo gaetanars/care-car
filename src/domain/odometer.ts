@@ -15,6 +15,17 @@ export function realKm(
     .reduce((km, r) => km + r.oldCounterKm - r.newCounterKm, displayedKm);
 }
 
+/** Displayed km = real km minus offsets of counter changes on or before `date`; inverse of `realKm`. */
+export function displayedKmOf(
+  date: string,
+  realKm: number,
+  replacements: OdometerReplacement[],
+): number {
+  return replacements
+    .filter((r) => r.date <= date)
+    .reduce((km, r) => km - (r.oldCounterKm - r.newCounterKm), realKm);
+}
+
 /** Oldest first; on the same date, lowest real km first. */
 export function comparePoints(a: MileagePoint, b: MileagePoint): number {
   return a.date.localeCompare(b.date) || a.realKm - b.realKm;

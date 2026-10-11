@@ -1,0 +1,2 @@
+DROP INDEX `plan_template_item_template_idx`;--> statement-breakpoint
+CREATE UNIQUE INDEX `plan_template_item_template_operation_type_unique` ON `plan_template_item` (`plan_template_id`,`operation_type_id`);

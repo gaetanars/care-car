@@ -64,7 +64,7 @@ plan d'entretien périodique, journal des interventions avec coûts et factures,
 - Rôles :
   - **Admin** : gère la liste blanche (ajout, retrait, rôle), le catalogue des types d'opérations et les plans types. Possède aussi ses propres véhicules.
   - **Utilisateur** : gère uniquement ses propres véhicules.
-- Isolation : toute lecture ou écriture d'une donnée de véhicule est filtrée côté serveur par le propriétaire. Un utilisateur ne voit jamais les véhicules d'un autre, admin compris.
+- Isolation : toute lecture ou écriture d'une donnée de véhicule est filtrée côté serveur par le propriétaire. Un utilisateur ne voit jamais les véhicules d'un autre, admin compris. Seule exception : les contrôles d'existence de l'admin sur données partagées (ex. « type d'opération utilisé » avant suppression) lisent toutes les lignes mais n'exposent qu'un statut.
 - Le retrait d'un utilisateur de la liste blanche bloque sa connexion. Ses données sont conservées.
 
 ## 5. Modèle de données
@@ -119,6 +119,8 @@ Les tables de session et de compte requises par Better Auth s'ajoutent au schém
 - Supprimer une intervention supprime ses opérations, ses lignes et ses fichiers, après confirmation.
 - Supprimer une pièce de la banque est refusé si elle est référencée par une `part_line`. Elle peut alors être marquée inutilisée via `notes`.
 - Un type d'opération utilisé ne peut pas être supprimé, seulement désactivé (`active = false`).
+- Un type à `code` (contrôle technique, contre-visite) garde sa catégorie et ne peut être ni désactivé ni supprimé : seul son nom est modifiable.
+- Un plan type porte au plus une ligne par type d'opération (index unique `(plan_template_id, operation_type_id)`). La ligne du contrôle technique est ni modifiable ni supprimable ; la contre-visite ne peut pas y être ajoutée.
 
 ## 6. Règles métier
 
@@ -199,7 +201,7 @@ Conception mobile d'abord. Toutes les saisies doivent être réalisables d'une m
 
 | Écran | Contenu |
 |---|---|
-| **Tableau de bord** | Cartes véhicules actifs : immatriculation, km actuel, nombre d'échéances En retard / À prévoir. Liste globale des échéances triées par date effective. |
+| **Tableau de bord** | Cartes véhicules actifs : immatriculation, km actuel, nombre d'échéances En retard / À prévoir. Liste globale des échéances triées par date effective, hors « À renseigner » ; les échéances sans date effective en fin de liste. |
 | **Véhicule › Synthèse** | Identité, km actuel, km/jour projeté, échéances du plan avec statut, dernière et prochaine réalisation. |
 | **Véhicule › Carnet** | Liste chronologique inverse des interventions : date, km, prestataire, opérations, montant total, indicateur de facture jointe. |
 | **Véhicule › Relevés** | Liste des relevés et changements de compteur, ajout rapide. |

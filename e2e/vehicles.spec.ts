@@ -113,6 +113,7 @@ test("archive hides forms, unarchive restores them", async ({
 }) => {
   void signedIn;
   const { plate, base } = await createVehicle(page);
+  await page.goto(`${base}/edit`);
   await page.getByLabel("Motif (facultatif)").fill("Vendu");
   await page.getByRole("button", { name: "Archiver" }).click();
   await expect(page.getByRole("status")).toContainText("Archivé");
@@ -132,6 +133,7 @@ test("archive hides forms, unarchive restores them", async ({
     page.getByRole("link", { name: new RegExp(plate) }),
   ).toBeVisible();
   await page.getByRole("link", { name: new RegExp(plate) }).click();
+  await page.getByRole("link", { name: "Modifier" }).click();
   await page.getByRole("button", { name: "Désarchiver" }).click();
   await expect(page.getByRole("button", { name: "Enregistrer" })).toBeVisible();
 });

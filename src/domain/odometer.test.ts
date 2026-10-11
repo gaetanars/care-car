@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
   currentPoint,
+  displayedKmOf,
   isMileageInconsistent,
   mileagePoints,
   realKm,
@@ -135,5 +136,21 @@ describe("isMileageInconsistent (SPEC §7)", () => {
       realKm: realKm("2026-07-01", 1100, [change]),
     };
     expect(isMileageInconsistent(after, [before])).toBe(false);
+  });
+});
+
+describe("displayedKmOf", () => {
+  it("is the real km without any counter change", () => {
+    expect(displayedKmOf("2026-01-01", 5000, [])).toBe(5000);
+  });
+
+  it("is the inverse of realKm around a counter change", () => {
+    expect(displayedKmOf("2026-05-31", 119_000, [change])).toBe(119_000);
+    expect(displayedKmOf("2026-06-01", 120_000, [change])).toBe(100);
+    expect(
+      displayedKmOf("2026-07-01", realKm("2026-07-01", 900, [change]), [
+        change,
+      ]),
+    ).toBe(900);
   });
 });

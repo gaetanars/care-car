@@ -1,125 +1,118 @@
 import { Suspense } from "react";
 import Link from "next/link";
-import { Button } from "@/components/ui/button";
-import { ActionForm } from "../action-form";
-import {
-  archiveVehicleAction,
-  unarchiveVehicleAction,
-  updateVehicleAction,
-} from "../actions";
-import { Field } from "../fields";
-import { ENERGY_LABELS } from "../labels";
+import { Card, CardContent } from "@/components/ui/card";
+import { buttonVariants } from "@/components/ui/button";
+import { DueStatusBadge } from "@/components/due-status";
+import { Km } from "@/components/km";
+import { displayedKmOf } from "@/domain/odometer";
+import { VehicleIdentity, formatDate } from "./identity";
 import { loadVehicle } from "./load";
+import { today } from "../form-utils";
+import { loadSummary } from "../summary";
 
-const dateFormat = new Intl.DateTimeFormat("fr-FR", { dateStyle: "long" });
-const formatDate = (iso: string) =>
-  dateFormat.format(new Date(`${iso}T00:00:00`));
+const perDay = new Intl.NumberFormat("fr-FR", { maximumFractionDigits: 1 });
 
-async function Identity({ params }: { params: Promise<{ id: string }> }) {
-  const { vehicle } = await loadVehicle(params);
-  const hidden = <input type="hidden" name="vehicleId" value={vehicle.id} />;
-
-  if (vehicle.archivedAt) {
-    return (
-      <>
-        <dl className="grid grid-cols-[auto_1fr] gap-x-4 gap-y-1 text-sm">
-          <dt className="text-muted-foreground">Immatriculation</dt>
-          <dd>{vehicle.plate}</dd>
-          <dt className="text-muted-foreground">Marque</dt>
-          <dd>{vehicle.make}</dd>
-          <dt className="text-muted-foreground">Modèle</dt>
-          <dd>{vehicle.model}</dd>
-          <dt className="text-muted-foreground">Énergie</dt>
-          <dd>{ENERGY_LABELS[vehicle.energy]}</dd>
-          <dt className="text-muted-foreground">1re immatriculation</dt>
-          <dd>{formatDate(vehicle.firstRegistrationDate)}</dd>
-          <dt className="text-muted-foreground">VIN</dt>
-          <dd>{vehicle.vin ?? "—"}</dd>
-          <dt className="text-muted-foreground">Archivé le</dt>
-          <dd>{formatDate(vehicle.archivedAt)}</dd>
-          <dt className="text-muted-foreground">Motif</dt>
-          <dd>{vehicle.archiveReason ?? "—"}</dd>
-        </dl>
-        <form action={unarchiveVehicleAction}>
-          {hidden}
-          <Button type="submit" variant="outline">
-            Désarchiver
-          </Button>
-        </form>
-        <Link
-          href={`/vehicles/${vehicle.id}/delete`}
-          className="text-destructive underline"
-        >
-          Supprimer le véhicule
-        </Link>
-      </>
-    );
-  }
-
+async function Summary({ params }: { params: Promise<{ id: string }> }) {
+  const { user, vehicle } = await loadVehicle(params);
+  const { current, kmPerDay, dues, planItems, replacements } = loadSummary(
+    user.id,
+    vehicle,
+  );
+  const now = today();
+  const names = new Map(
+    planItems.map((i) => [i.operationTypeId, i.operationTypeName]),
+  );
+  const archived = vehicle.archivedAt !== null;
   return (
     <>
-      <ActionForm action={updateVehicleAction} submitLabel="Enregistrer">
-        {hidden}
-        <Field
-          label="Immatriculation"
-          name="plate"
-          defaultValue={vehicle.plate}
-          required
-          maxLength={20}
-        />
-        <Field
-          label="Marque"
-          name="make"
-          defaultValue={vehicle.make}
-          required
-          maxLength={200}
-        />
-        <Field
-          label="Modèle"
-          name="model"
-          defaultValue={vehicle.model}
-          required
-          maxLength={200}
-        />
-        <p className="text-sm">
-          Énergie : {ENERGY_LABELS[vehicle.energy]} (non modifiable)
-        </p>
-        <Field
-          label="Date de 1re immatriculation"
-          name="firstRegistrationDate"
-          type="date"
-          defaultValue={vehicle.firstRegistrationDate}
-          required
-        />
-        <Field
-          label="VIN (facultatif)"
-          name="vin"
-          defaultValue={vehicle.vin ?? ""}
-          maxLength={17}
-        />
-      </ActionForm>
-      <section className="flex flex-col gap-2 border-t pt-4">
-        <h2 className="font-medium">Archiver</h2>
-        <ActionForm
-          action={archiveVehicleAction}
-          submitLabel="Archiver"
-          variant="outline"
-        >
-          {hidden}
-          <Field
-            label="Date d'archivage (aujourd'hui par défaut)"
-            name="archivedAt"
-            type="date"
-          />
-          <Field label="Motif (facultatif)" name="reason" maxLength={200} />
-        </ActionForm>
-      </section>
+      <VehicleIdentity vehicle={vehicle} />
       <Link
-        href={`/vehicles/${vehicle.id}/delete`}
-        className="text-destructive underline"
+        href={`/vehicles/${vehicle.id}/edit`}
+        className={
+          buttonVariants({ variant: "outline", size: "sm" }) + " self-start"
+        }
       >
-        Supprimer le véhicule
+        Modifier
       </Link>
+      <section className="flex flex-col gap-1 border-t pt-4 text-sm">
+        <p data-testid="current-km">
+          Km actuel :{" "}
+          {current ? (
+            <Km
+              displayedKm={displayedKmOf(
+                current.date,
+                current.realKm,
+                replacements,
+              )}
+              realKm={current.realKm}
+            />
+          ) : (
+            "aucun relevé"
+          )}
+        </p>
+        <p>
+          {kmPerDay === null
+            ? "Pas de projection"
+            : `${perDay.format(kmPerDay)} km/jour (12 derniers mois)`}
+        </p>
+      </section>
+      {archived ? (
+        <p className="text-muted-foreground text-sm">
+          Archivé : pas d&apos;échéances.
+        </p>
+      ) : (
+        <ul className="flex flex-col gap-3">
+          {dues.map((due) => (
+            <li key={due.operationTypeId}>
+              <Card data-testid={`due-${names.get(due.operationTypeId)}`}>
+                <CardContent className="flex flex-col gap-1 text-sm">
+                  <div className="flex items-center justify-between gap-2">
+                    <p className="font-medium">
+                      {names.get(due.operationTypeId)}
+                    </p>
+                    <DueStatusBadge status={due.status} />
+                  </div>
+                  <p>
+                    Dernière réalisation :{" "}
+                    {due.lastRealization ? (
+                      <>
+                        {formatDate(due.lastRealization.date)} ·{" "}
+                        <Km
+                          displayedKm={displayedKmOf(
+                            due.lastRealization.date,
+                            due.lastRealization.km,
+                            replacements,
+                          )}
+                          realKm={due.lastRealization.km}
+                        />
+                      </>
+                    ) : (
+                      "—"
+                    )}
+                  </p>
+                  <p>
+                    Prochaine échéance :{" "}
+                    {due.effectiveDate ? formatDate(due.effectiveDate) : "—"}
+                    {due.dueKm !== null && (
+                      <>
+                        {" · "}
+                        <Km
+                          displayedKm={displayedKmOf(
+                            now,
+                            due.dueKm,
+                            replacements,
+                          )}
+                          realKm={due.dueKm}
+                        />
+                      </>
+                    )}
+                  </p>
+                </CardContent>
+              </Card>
+            </li>
+          ))}
+        </ul>
+      )}
     </>
   );
 }
@@ -127,7 +120,7 @@ async function Identity({ params }: { params: Promise<{ id: string }> }) {
 export default function VehiclePage({ params }: PageProps<"/vehicles/[id]">) {
   return (
     <Suspense fallback={null}>
-      <Identity params={params} />
+      <Summary params={params} />
     </Suspense>
   );
 }

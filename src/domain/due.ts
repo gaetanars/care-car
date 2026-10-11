@@ -86,6 +86,7 @@ export function computeDue(
     dueDate: null,
     projectedDate: null,
     effectiveDate: null,
+    lastRealization: null,
   };
   if (!base) return none;
 
@@ -117,6 +118,7 @@ export function computeDue(
     dueDate,
     projectedDate,
     effectiveDate: dates[0] ?? null,
+    lastRealization: realization,
   };
 }
 

@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { eurosToCents } from "./money";
-import { BASELINES, ENERGIES, FLUID_TYPES } from "./labels";
+import { BASELINES, CATEGORIES, ENERGIES, FLUID_TYPES } from "./labels";
 
 const text = (max: number) => z.string().trim().min(1).max(max);
 const optionalText = (max: number) =>
@@ -61,6 +61,10 @@ const atLeastOneMessage = {
   path: ["intervalKm"],
 };
 
+export const planIntervals = z
+  .object(intervals)
+  .refine(atLeastOne, atLeastOneMessage);
+
 export const addPlanItem = z
   .object({ operationTypeId: id, ...intervals })
   .refine(atLeastOne, atLeastOneMessage);
@@ -68,6 +72,11 @@ export const addPlanItem = z
 export const updatePlanItem = z
   .object({ baseline: z.enum(BASELINES), ...intervals })
   .refine(atLeastOne, atLeastOneMessage);
+
+export const operationTypeInput = z.object({
+  name: text(200),
+  category: z.enum(CATEGORIES),
+});
 
 export const fluid = z.object({
   type: z.enum(FLUID_TYPES),

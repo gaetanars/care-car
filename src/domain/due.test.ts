@@ -67,6 +67,7 @@ describe("base de calcul (SPEC §6.3)", () => {
       dueDate: null,
       projectedDate: null,
       effectiveDate: null,
+      lastRealization: null,
     });
   });
 
@@ -293,5 +294,27 @@ describe("computeVehicleDues", () => {
         today,
       ),
     ).toEqual([]);
+  });
+});
+
+describe("dernière réalisation (SPEC §7)", () => {
+  it("is null for since_registration without realization", () => {
+    const d = due(ct, []);
+    expect(d.baseDate).toBe("2020-03-31");
+    expect(d.lastRealization).toBeNull();
+  });
+
+  it("is null for a_renseigner", () => {
+    expect(due(oil, []).lastRealization).toBeNull();
+  });
+
+  it("is the latest intervention with real km", () => {
+    const d = due(oil, [intervention("2026-01-01", 9_000, 1)]);
+    expect(d.lastRealization).toEqual({ date: "2026-01-01", km: 9_000 });
+  });
+
+  it("ignores a contre-visite", () => {
+    const d = due(ct, [intervention("2026-02-01", 9_000, 3)]);
+    expect(d.lastRealization).toBeNull();
   });
 });

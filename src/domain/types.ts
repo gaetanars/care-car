@@ -65,4 +65,6 @@ export interface Due {
   dueDate: string | null;
   projectedDate: string | null;
   effectiveDate: string | null;
+  /** Latest intervention containing the operation type (SPEC §7), not the registration baseline. */
+  lastRealization: { date: string; km: number } | null;
 }
