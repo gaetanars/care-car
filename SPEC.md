@@ -74,7 +74,8 @@ Base SQLite. Montants en euros TTC, stockés en centimes (entier). Dates au form
 ```
 user                  id, email (unique), name, role [admin|user], allowed (bool), created_at
 
-operation_type        id, name (unique), category [entretien|reparation|reglementaire], active (bool)
+operation_type        id, code (nullable, unique) [controle_technique|contre_visite_ct],
+                      name (unique), category [entretien|reparation|reglementaire], active (bool)
 
 plan_template         id, energy [essence|diesel|hybride|electrique] (unique)
 plan_template_item    id, plan_template_id, operation_type_id,
@@ -128,13 +129,14 @@ Les tables de session et de compte requises par Better Auth s'ajoutent au schém
   - Décalage d'un changement = `old_counter_km − new_counter_km`.
 - Tous les calculs (échéances, projection, €/km) utilisent le kilométrage réel. L'interface affiche le kilométrage affiché, avec le réel en info-bulle quand ils diffèrent.
 - **Points kilométriques** = relevés + kilométrages des interventions.
-- **Kilométrage actuel** = point le plus récent.
+- **Kilométrage actuel** = point le plus récent. À date égale, le point de km réel le plus élevé (de même pour la dernière réalisation, §6.3).
 
 ### 6.2 Projection kilométrique
 
 - km/jour = (km réel du dernier point − km réel du premier point de la fenêtre) / nombre de jours entre ces deux points.
-- La fenêtre couvre les 12 derniers mois.
+- La fenêtre couvre les 12 derniers mois. Les points postérieurs à aujourd'hui en sont exclus.
 - Il faut au moins 2 points dans la fenêtre, séparés d'au moins 1 jour. Sinon, pas de projection, et les échéances au kilométrage ne sont pas converties en date.
+- km/jour ≤ 0 ⇒ pas de projection.
 
 ### 6.3 Échéances
 
@@ -150,6 +152,11 @@ Pour chaque `plan_item` d'un véhicule non archivé :
 5. **Date projetée de l'échéance km** = aujourd'hui + (échéance km − km actuel) / (km/jour), si la projection est disponible.
 6. **Date d'échéance effective** = la plus proche entre l'échéance date et la date projetée. Règle : le premier des deux seuils atteint.
 
+Précisions de calcul :
+
+- Ajout de mois (point 4) : si le jour n'existe pas dans le mois cible, on prend le dernier jour de ce mois (31/01 + 1 mois = 28 ou 29/02).
+- Date projetée (point 5) : `aujourd'hui + floor((échéance km − km actuel) / km/jour)` jours, sans borne : elle peut être passée.
+
 ### 6.4 Statuts
 
 | Statut | Condition (évaluée dans cet ordre) |
@@ -163,10 +170,10 @@ Les seuils (28 jours, 1 000 km) sont des constantes de l'application.
 
 ### 6.5 Contrôle technique
 
-- Le type d'opération « Contrôle technique » appartient à la catégorie Réglementaire.
+- Le type d'opération « Contrôle technique » (`code = controle_technique`) appartient à la catégorie Réglementaire.
 - Il est présent dans tous les plans types : `interval_months = 24`, `baseline = since_registration`.
 - Cas particulier du premier contrôle : en l'absence de réalisation, l'échéance date = `first_registration_date` + 48 mois.
-- La « Contre-visite CT » est un type d'opération distinct, sans effet sur l'échéance : seule la visite initiale compte (le délai de contre-visite de 2 mois et la prochaine échéance partent de la visite initiale). Le PV et le timbre de la carte grise font foi.
+- La « Contre-visite CT » (`code = contre_visite_ct`) est un type d'opération distinct, sans effet sur l'échéance : seule la visite initiale compte (le délai de contre-visite de 2 mois et la prochaine échéance partent de la visite initiale). Le PV et le timbre de la carte grise font foi.
 - La base de calcul est la date de la visite, même si elle a été faite en avance : l'alerte peut être légèrement trop précoce, jamais trop tardive.
 
 ### 6.6 Plans d'entretien
@@ -336,3 +343,4 @@ Aucune tâche planifiée ni worker en V1 : échéances, statuts et flux iCal son
 | 7 | Catalogue et plans types initiaux | Hors spec : fichier `seed/catalogue.json`, rédigé à partir de l'export Numbers (thermique). Hybride et électrique : version générique à valider. |
 | 8 | Format d'import CSV | Reste à définir à réception de l'export (§12). Dernier jalon de réalisation. |
 | 9 | `VALARM` | Client cible Apple Calendar : `VALARM` conservé, pas de second événement (§9) |
+| 10 | Code des types d'opération | Colonne `operation_type.code` (nullable, unique) : le moteur identifie le CT par ce code, jamais par id ni nom. Ajout de mois ramené au dernier jour du mois cible. Date projetée en arrondi bas, sans borne. km/jour ≤ 0 ⇒ pas de projection (§5, §6.2, §6.3, §6.5). |

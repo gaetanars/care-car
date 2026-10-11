@@ -6,10 +6,11 @@ Critères communs à chaque jalon : `pnpm check` vert, E2E des parcours touchés
 
 - [x] **0. Socle** — chaîne outillée (lint par zone, types stricts, Vitest, Playwright mobile avec session injectée, hooks, CI, Docker), aucune logique métier.
   - Sortie : `/api/health` OK ; page protégée accessible via la fixture de session ; couverture branches 100 % sur `src/domain`.
-- [ ] **1. Moteur de règles** (§6) — module pur `src/domain`, sans dépendance.
+- [x] **1. Moteur de règles** (§6) — module pur `src/domain`, sans dépendance.
   - Sortie : km réel, projection, échéances, statuts, contrôle technique, plans ; tests exhaustifs (changement de compteur, sans projection, CT 48/24 mois, contre-visite).
 - [ ] **2. Schéma + couche d'accès + isolation** (§5, §4)
   - Sortie : schéma §5 migré ; fonctions `src/server/data` avec `ownerId` ; test d'isolation pour chacune.
+  - À migrer : colonne `operation_type.code` (nullable, unique ; `controle_technique | contre_visite_ct`), requise par le moteur (SPEC §5, §14 #10).
   - Dépendance : `seed/catalogue.json` suppose l'export Numbers (§14 #7). En attendant, catalogue minimal **provisoire** (contrôle technique, contre-visite, vidange).
 - [ ] **3. Auth, liste blanche, admin** (§4, §13.6)
   - Sortie : connexion Google, `ADMIN_EMAIL` inscrit d'office, retrait = sessions supprimées, gestion de la liste blanche.
