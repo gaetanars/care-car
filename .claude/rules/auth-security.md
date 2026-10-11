@@ -15,4 +15,3 @@ paths:
 - Fichiers : PDF uniquement, type vérifié par magic bytes, 10 Mo max par envoi, servis uniquement après contrôle du propriétaire, jamais en statique (§8).
 - Validation serveur de toute entrée (types, bornes, tailles) avec `zod`.
 - Aucun secret dans le dépôt : variables d'environnement uniquement.
-- Gotenberg n'est joignable que sur le réseau interne.

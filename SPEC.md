@@ -242,9 +242,9 @@ Conception mobile d'abord. Toutes les saisies doivent être réalisables d'une m
 
 ## 10. Export PDF du carnet
 
-Généré à la demande pour un véhicule (actif ou archivé), avec Gotenberg :
+Généré à la demande pour un véhicule (actif ou archivé), généré côté application (pdf-lib pour la fusion) :
 
-1. Fiche rendue en HTML puis convertie en PDF :
+1. Fiche générée en PDF :
    - identité du véhicule, km actuel ;
    - fluides ;
    - plan d'entretien avec statuts ;
@@ -281,7 +281,7 @@ Saisie manuelle dans l'interface, pas de fonction d'import (3 véhicules, sans m
 | UI | Tailwind CSS + shadcn/ui (composants copiés dans le projet) |
 | Base | SQLite, mode WAL, fichier sur volume |
 | Fichiers | Système de fichiers, sur volume |
-| PDF | Gotenberg (conteneur dédié) : conversion HTML→PDF, image→PDF, fusion |
+| PDF | Génération côté application : fiche du carnet (pdf-lib / lib de mise en page) et fusion des factures ; pas de conversion d'images (§8) |
 | ORM / migrations | Drizzle ORM + better-sqlite3, migrations drizzle-kit |
 | Auth | Better Auth (provider Google OIDC), sessions en base, cookie HttpOnly, Secure, SameSite=Lax |
 
@@ -302,12 +302,11 @@ Aucune tâche planifiée ni worker en V1 : échéances, statuts et flux iCal son
 | `AUTH_SECRET` | Secret de signature des sessions |
 | `ADMIN_EMAIL` | Admin initial |
 | `DATA_DIR` | Répertoire de la base SQLite et des fichiers |
-| `GOTENBERG_URL` | URL interne de Gotenberg |
 
 ### 13.4 Déploiement
 
 - Image Docker multi-étapes, sortie Next.js `standalone`, plateforme `linux/amd64` (DS918+).
-- `docker-compose.yml` : services `app` et `gotenberg`. Gotenberg n'est joignable que sur le réseau interne, sans port publié.
+- `docker-compose.yml` : service unique `app`.
 - Volume unique `./data` monté sur `DATA_DIR`.
 - Reverse proxy Synology : HTTPS (Let's Encrypt, domaine `synology.me`) vers le port de `app`.
 - Console Google Cloud : URI de redirection autorisée = `APP_URL` + chemin de callback de la librairie d'authentification.

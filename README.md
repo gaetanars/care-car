@@ -44,14 +44,13 @@ flowchart LR
     U([📱 Navigateur]) -->|HTTPS| P[Reverse proxy]
     P --> A["care-car<br/>Next.js standalone"]
     A --> D[("SQLite + fichiers<br/>volume ./data")]
-    A -.->|réseau interne| G[Gotenberg<br/>HTML→PDF · fusion]
     A <-->|OIDC| O[Google]
     C([📆 Apple Calendar]) -->|/calendar/‹token›.ics| P
 ```
 
 - **Une seule application** Next.js (App Router) + TypeScript strict, Tailwind + shadcn/ui.
 - **SQLite** (WAL) via Drizzle ; migrations appliquées au démarrage.
-- **Gotenberg** pour les PDF, joignable uniquement sur le réseau Docker interne.
+- **PDF générés dans l'application** (pdf-lib pour la fusion), sans service annexe.
 - **Instance unique avec disque persistant** : le serverless est exclu (SQLite).
 
 ## 🚀 Installation
@@ -71,7 +70,7 @@ openssl rand -base64 32      # → AUTH_SECRET
 docker compose up -d --build
 ```
 
-L'application écoute sur le port `3000`. Le service `gotenberg` n'expose aucun port ; `GOTENBERG_URL` et `DATA_DIR` sont déjà fixés par le `docker-compose.yml`. Les données vivent dans `./data` (base SQLite, fichiers, sauvegardes).
+L'application écoute sur le port `3000`. `DATA_DIR` est déjà fixé par le `docker-compose.yml`. Les données vivent dans `./data` (base SQLite, fichiers, sauvegardes).
 
 Vérification : `curl http://localhost:3000/api/health`.
 
@@ -101,11 +100,9 @@ Même image, **une seule instance** avec un **disque persistant** monté sur `DA
 ```bash
 docker buildx build --platform linux/amd64 -t care-car .
 docker run -d --name care-car -p 3000:3000 \
-  --env-file .env -e DATA_DIR=/data -e GOTENBERG_URL=http://gotenberg:3000 \
+  --env-file .env -e DATA_DIR=/data \
   -v /srv/care-car:/data care-car
 ```
-
-Gotenberg (`gotenberg/gotenberg:8`) doit être joignable depuis l'application, sur un réseau privé.
 
 ### 4. Sans Docker (Node)
 
@@ -117,9 +114,6 @@ cp .env.example .env         # puis renseigner (DATA_DIR = ./data par exemple)
 pnpm build
 pnpm start                   # http://localhost:3000
 ```
-
-L'export PDF nécessite une instance Gotenberg accessible via `GOTENBERG_URL`
-(`docker run --rm -p 3001:3000 gotenberg/gotenberg:8`).
 
 ## 🔐 Configuration de la connexion Google
 
@@ -178,7 +172,6 @@ care-car n'a **pas de mot de passe** : l'authentification passe uniquement par G
 | `AUTH_SECRET`          |     ✅      | Secret de signature des sessions (`openssl rand -base64 32`).          |
 | `ADMIN_EMAIL`          |     ✅      | Email Google de l'administrateur initial.                              |
 | `DATA_DIR`             |     ✅      | Répertoire de la base SQLite et des fichiers (`/data` en conteneur).   |
-| `GOTENBERG_URL`        | export PDF  | URL interne de Gotenberg (`http://gotenberg:3000` avec Compose).       |
 
 > [!IMPORTANT]
 > Les secrets restent dans `.env` ou les variables d'environnement. Ne jamais les committer.

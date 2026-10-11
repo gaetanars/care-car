@@ -30,5 +30,5 @@ Critères communs à chaque jalon : `pnpm check` vert, E2E des parcours touchés
 - [ ] **6. Tableau de bord + synthèse** (§7)
   - Inclut l'écran Admin du catalogue et des plans types (§2.1, §4, §7), reporté du jalon 3.
 - [ ] **7. Flux iCal** (§9) — `VALARM` J-28, jeton ≥ 256 bits haché.
-- [ ] **8. Export PDF du carnet** (§10) — via Gotenberg.
+- [ ] **8. Export PDF du carnet** (§10) — pdf-lib (fusion) + génération de la fiche côté app.
 - [ ] **9. Analytique** (§11) — pièces par catégorie, MO séparée non ventilée.
