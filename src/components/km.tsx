@@ -14,14 +14,21 @@ export function Km({
   displayedKm: number;
   realKm: number;
 }) {
-  if (displayedKm === realKm) return <>{number.format(displayedKm)}\u00a0km</>;
+  if (displayedKm === realKm)
+    return (
+      <>
+        {number.format(displayedKm)}
+        {"\u00a0"}km
+      </>
+    );
   return (
     <Popover>
       <PopoverTrigger
         className="underline decoration-dotted"
         aria-label={`${number.format(displayedKm)} km affichés, voir le km réel`}
       >
-        {number.format(displayedKm)}\u00a0km
+        {number.format(displayedKm)}
+        {"\u00a0"}km
       </PopoverTrigger>
       <PopoverContent>
         Km réel : {number.format(realKm)} km (compteur remplacé).

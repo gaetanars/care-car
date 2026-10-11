@@ -30,7 +30,11 @@ export default defineConfig({
         resolve: { alias },
         test: {
           name: "integration",
-          include: ["src/server/**/*.test.ts", "src/app/**/*.test.ts"],
+          include: [
+            "src/server/**/*.test.ts",
+            "src/app/**/*.test.ts",
+            "src/components/**/*.test.ts",
+          ],
           environment: "node",
         },
       },
