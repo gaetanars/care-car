@@ -26,32 +26,36 @@ test("plan: copied template, add, duplicate, edit, delete", async ({
   await page.goto(`${base}/plan`);
 
   const ct = page.getByTestId("plan-Contrôle technique");
-  await expect(ct.getByLabel("Intervalle (mois)")).toHaveValue("24");
+  await expect(ct).toContainText("24 mois");
 
-  const add = page.locator("section").filter({ hasText: "Ajouter une ligne" });
-  await add.getByLabel("Type d'opération").selectOption({ label: "Vidange" });
-  await add.getByLabel("Intervalle (km)").fill("15000");
-  await add.getByRole("button", { name: "Ajouter" }).click();
+  const dialog = page.getByRole("dialog");
+  async function addVidange(km: string) {
+    await page.getByRole("button", { name: "Ajouter une ligne" }).click();
+    await dialog
+      .getByLabel("Type d'opération")
+      .selectOption({ label: "Vidange" });
+    await dialog.getByLabel("Intervalle (km)").fill(km);
+    await dialog.getByRole("button", { name: "Ajouter", exact: true }).click();
+  }
+
   const oil = page.getByTestId("plan-Vidange");
-  await expect(oil).toBeVisible();
-
-  await add.getByLabel("Type d'opération").selectOption({ label: "Vidange" });
-  await add.getByLabel("Intervalle (km)").fill("1000");
-  await add.getByRole("button", { name: "Ajouter" }).click();
-  await expect(add.getByRole("alert")).toContainText("déjà dans le plan");
-
-  await oil.getByLabel("Intervalle (km)").fill("20000");
-  await oil.getByRole("button", { name: "Enregistrer" }).click();
+  await oil.getByRole("button", { name: "Modifier" }).click();
+  await dialog.getByLabel("Intervalle (km)").fill("20000");
+  await dialog.getByRole("button", { name: "Enregistrer" }).click();
+  await expect(dialog).toHaveCount(0);
   await page.reload();
-  await expect(
-    page.getByTestId("plan-Vidange").getByLabel("Intervalle (km)"),
-  ).toHaveValue("20000");
+  await expect(oil).toContainText("20 000");
 
-  await page
-    .getByTestId("plan-Vidange")
-    .getByRole("button", { name: "Supprimer" })
-    .click();
-  await expect(page.getByTestId("plan-Vidange")).toHaveCount(0);
+  await oil.getByRole("button", { name: "Modifier" }).click();
+  await dialog.getByRole("button", { name: "Supprimer" }).click();
+  await expect(oil).toHaveCount(0);
+
+  await addVidange("15000");
+  await expect(dialog).toHaveCount(0);
+  await expect(oil).toContainText("15 000");
+
+  await addVidange("1000");
+  await expect(dialog.getByRole("alert")).toContainText("déjà dans le plan");
 });
 
 test("fluids: add, edit, delete", async ({ page, signedIn }) => {

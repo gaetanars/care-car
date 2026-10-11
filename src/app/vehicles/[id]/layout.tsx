@@ -10,27 +10,29 @@ async function Header({ params }: { params: Promise<{ id: string }> }) {
   const { vehicle } = await loadVehicle(params);
   return (
     <>
-      <div className="flex flex-col gap-2">
-        <Link href="/" className="text-body-sm text-ink-muted underline">
-          Mes véhicules
-        </Link>
-        <h1 className="text-title flex flex-col items-start gap-2">
-          {vehicle.make} {vehicle.model}
-          <PlateTag plate={vehicle.plate} />
-        </h1>
+      <div className="flex flex-wrap items-end justify-between gap-x-4 gap-y-3">
+        <div className="flex flex-col gap-2">
+          <Link href="/" className="text-body-sm text-ink-muted underline">
+            Mes véhicules
+          </Link>
+          <h1 className="text-title flex flex-wrap items-center gap-x-3 gap-y-2">
+            {vehicle.make} {vehicle.model}
+            <PlateTag plate={vehicle.plate} />
+          </h1>
+        </div>
+        {!vehicle.archivedAt && (
+          <Link
+            href={`/vehicles/${vehicle.id}/readings`}
+            className={buttonVariants({ variant: "secondary" })}
+          >
+            Saisir un relevé
+          </Link>
+        )}
       </div>
       {vehicle.archivedAt && (
         <Banner tone="neutral" role="status" title="Archivé">
           Lecture seule : ce véhicule n&apos;a plus d&apos;échéances.
         </Banner>
-      )}
-      {!vehicle.archivedAt && (
-        <Link
-          href={`/vehicles/${vehicle.id}/readings`}
-          className={buttonVariants({ variant: "secondary" }) + " self-start"}
-        >
-          Saisir un relevé
-        </Link>
       )}
       <VehicleTabs vehicleId={vehicle.id} />
     </>
@@ -42,7 +44,7 @@ export default function VehicleLayout({
   params,
 }: LayoutProps<"/vehicles/[id]">) {
   return (
-    <main className="mx-auto flex w-full max-w-2xl flex-col gap-5 px-4 py-6">
+    <main className="mx-auto flex w-full max-w-6xl flex-col gap-5 px-4 py-6">
       <Suspense fallback={<p>Chargement…</p>}>
         <Header params={params} />
       </Suspense>

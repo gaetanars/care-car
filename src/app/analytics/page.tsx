@@ -18,7 +18,7 @@ export default function AnalyticsPage({
   searchParams,
 }: PageProps<"/analytics">) {
   return (
-    <main className="mx-auto flex w-full max-w-2xl flex-col gap-5 px-4 py-6">
+    <main className="mx-auto flex w-full max-w-6xl flex-col gap-5 px-4 py-6">
       <h1 className="text-title">Analyse</h1>
       <Suspense fallback={<p>Chargement…</p>}>
         <Analytics searchParams={searchParams} />

@@ -1,8 +1,7 @@
 import { Suspense } from "react";
-import { Card, CardContent } from "@/components/ui/card";
+import { EditDialog } from "@/components/edit-dialog";
 import { listOperationTypes } from "@/server/data/catalogue";
 import { listPlanItems } from "@/server/data/vehicles";
-import { ActionForm } from "../../action-form";
 import {
   addPlanItemAction,
   deletePlanItemAction,
@@ -20,28 +19,120 @@ async function Plan({ params }: { params: Promise<{ id: string }> }) {
   const types = listOperationTypes().filter(
     (t) => t.code !== "contre_visite_ct",
   );
+  const km = (n: number | null) =>
+    n ? `${new Intl.NumberFormat("fr-FR").format(n)}\u00a0km` : "—";
+  const months = (n: number | null) => (n ? `${n}\u00a0mois` : "—");
   return (
-    <>
-      <ul className="flex flex-col gap-3">
-        {items.length === 0 && <li>Aucune ligne dans le plan.</li>}
-        {items.map((item) => (
-          <li key={item.id}>
-            <Card data-testid={`plan-${item.operationTypeName}`}>
-              <CardContent className="flex flex-col gap-3">
-                <p className="font-medium">{item.operationTypeName}</p>
-                {archived ? (
-                  <p className="text-sm">
-                    {item.intervalKm ? `${item.intervalKm} km` : "—"} ·{" "}
-                    {item.intervalMonths ? `${item.intervalMonths} mois` : "—"}{" "}
-                    · {BASELINE_LABELS[item.baseline]}
+    <section className="flex flex-col gap-3">
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <h2 className="text-heading">Plan d&apos;entretien</h2>
+        {!archived && (
+          <EditDialog
+            triggerLabel="Ajouter une ligne"
+            title="Ajouter une ligne"
+            action={addPlanItemAction}
+            submitLabel="Ajouter"
+          >
+            <input type="hidden" name="vehicleId" value={vehicle.id} />
+            <SelectField
+              label="Type d'opération"
+              name="operationTypeId"
+              options={types.map((t) => ({ value: t.id, label: t.name }))}
+            />
+            <Field
+              label="Intervalle (km)"
+              name="intervalKm"
+              type="number"
+              min={1}
+            />
+            <Field
+              label="Intervalle (mois)"
+              name="intervalMonths"
+              type="number"
+              min={1}
+            />
+          </EditDialog>
+        )}
+      </div>
+      {items.length === 0 ? (
+        <p>Aucune ligne dans le plan.</p>
+      ) : (
+        <table className="text-body-sm w-full">
+          <caption className="sr-only">Plan d&apos;entretien</caption>
+          <thead>
+            <tr className="border-b border-line text-left text-ink-muted">
+              <th scope="col" className="py-2 pr-3 font-semibold">
+                Type d&apos;opération
+              </th>
+              <th
+                scope="col"
+                className="num py-2 pr-3 text-right max-sm:hidden"
+              >
+                Intervalle km
+              </th>
+              <th
+                scope="col"
+                className="num py-2 pr-3 text-right max-sm:hidden"
+              >
+                Intervalle mois
+              </th>
+              <th scope="col" className="py-2 pr-3 max-sm:hidden">
+                Base de calcul
+              </th>
+              {!archived && (
+                <th scope="col" className="py-2 text-right">
+                  <span className="sr-only">Action</span>
+                </th>
+              )}
+            </tr>
+          </thead>
+          <tbody>
+            {items.map((item) => (
+              <tr
+                key={item.id}
+                data-testid={`plan-${item.operationTypeName}`}
+                className="border-b border-line"
+              >
+                <td className="py-2 pr-3">
+                  <p className="font-medium">{item.operationTypeName}</p>
+                  <p className="text-ink-muted sm:hidden">
+                    {km(item.intervalKm)} · {months(item.intervalMonths)} ·{" "}
+                    {BASELINE_LABELS[item.baseline]}
                   </p>
-                ) : (
-                  <>
-                    <ActionForm
+                </td>
+                <td className="num py-2 pr-3 text-right tabular-nums max-sm:hidden">
+                  {km(item.intervalKm)}
+                </td>
+                <td className="num py-2 pr-3 text-right tabular-nums max-sm:hidden">
+                  {months(item.intervalMonths)}
+                </td>
+                <td className="py-2 pr-3 max-sm:hidden">
+                  {BASELINE_LABELS[item.baseline]}
+                </td>
+                {!archived && (
+                  <td className="py-2 text-right">
+                    <EditDialog
+                      triggerLabel="Modifier"
+                      title={`Modifier : ${item.operationTypeName}`}
                       action={updatePlanItemAction}
                       submitLabel="Enregistrer"
-                      variant="secondary"
-                      size="sm"
+                      danger={
+                        <form action={deletePlanItemAction}>
+                          <input
+                            type="hidden"
+                            name="vehicleId"
+                            value={vehicle.id}
+                          />
+                          <input
+                            type="hidden"
+                            name="planItemId"
+                            value={item.id}
+                          />
+                          <Button type="submit" variant="destructive" size="sm">
+                            Supprimer
+                          </Button>
+                        </form>
+                      }
                     >
                       <input
                         type="hidden"
@@ -75,51 +166,15 @@ async function Plan({ params }: { params: Promise<{ id: string }> }) {
                           label: BASELINE_LABELS[b],
                         }))}
                       />
-                    </ActionForm>
-                    <form action={deletePlanItemAction}>
-                      <input
-                        type="hidden"
-                        name="vehicleId"
-                        value={vehicle.id}
-                      />
-                      <input type="hidden" name="planItemId" value={item.id} />
-                      <Button type="submit" variant="destructive" size="sm">
-                        Supprimer
-                      </Button>
-                    </form>
-                  </>
+                    </EditDialog>
+                  </td>
                 )}
-              </CardContent>
-            </Card>
-          </li>
-        ))}
-      </ul>
-      {!archived && (
-        <section className="flex flex-col gap-3 border-t border-line pt-5">
-          <h2 className="text-heading">Ajouter une ligne</h2>
-          <ActionForm action={addPlanItemAction} submitLabel="Ajouter">
-            <input type="hidden" name="vehicleId" value={vehicle.id} />
-            <SelectField
-              label="Type d'opération"
-              name="operationTypeId"
-              options={types.map((t) => ({ value: t.id, label: t.name }))}
-            />
-            <Field
-              label="Intervalle (km)"
-              name="intervalKm"
-              type="number"
-              min={1}
-            />
-            <Field
-              label="Intervalle (mois)"
-              name="intervalMonths"
-              type="number"
-              min={1}
-            />
-          </ActionForm>
-        </section>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       )}
-    </>
+    </section>
   );
 }
 

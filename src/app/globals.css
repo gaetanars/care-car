@@ -227,3 +227,8 @@
     outline-offset: 2px;
   }
 }
+
+/* Tabular figures for km, dates and amounts (design README). */
+.num {
+  font-variant-numeric: tabular-nums;
+}

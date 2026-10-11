@@ -28,6 +28,7 @@ export function ActionForm({
   size = "default",
   className = "flex flex-col gap-4",
   total,
+  onSuccess,
   children,
 }: {
   action: (state: FormState, formData: FormData) => Promise<FormState>;
@@ -37,6 +38,8 @@ export function ActionForm({
   className?: string;
   /** Sticky total bar shown with the submit button (intervention form). */
   total?: ReactNode;
+  /** Called after a successful submission, next to the form reset. */
+  onSuccess?: () => void;
   children?: ReactNode;
 }) {
   const [state, dispatch, pending] = useActionState(action, INITIAL);
@@ -48,8 +51,9 @@ export function ActionForm({
   useEffect(() => {
     if (state !== INITIAL && !state.error && !state.warning) {
       formRef.current?.reset();
+      onSuccess?.();
     }
-  }, [state]);
+  }, [state, onSuccess]);
 
   return (
     <form
