@@ -29,7 +29,8 @@
       "Read(./.env.production)",
       "Read(./.env.development)",
       "Read(./.env.*.local)",
-      "Edit(./data/**)"
+      "Edit(/data/**)",
+      "Edit(/.e2e-data/**)"
     ]
   },
   "hooks": {
