@@ -29,8 +29,7 @@
       "Read(./.env.production)",
       "Read(./.env.development)",
       "Read(./.env.*.local)",
-      "Edit(./data/**)",
-      "Write(./data/**)"
+      "Edit(./data/**)"
     ]
   },
   "hooks": {
