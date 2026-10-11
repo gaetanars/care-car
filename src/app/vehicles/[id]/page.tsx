@@ -116,6 +116,15 @@ async function Summary({ params }: { params: Promise<{ id: string }> }) {
       >
         Modifier
       </Link>
+      <a
+        href={`/vehicles/${vehicle.id}/export`}
+        download
+        className={
+          buttonVariants({ variant: "outline" }) + " min-h-11 self-start"
+        }
+      >
+        Exporter le carnet (PDF)
+      </a>
     </>
   );
 }

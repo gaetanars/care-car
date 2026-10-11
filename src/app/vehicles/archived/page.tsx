@@ -11,7 +11,7 @@ async function Archived() {
   return (
     <ul className="flex flex-col gap-3">
       {vehicles.map((v) => (
-        <li key={v.id}>
+        <li key={v.id} className="flex flex-col gap-2">
           <Link
             href={`/vehicles/${v.id}`}
             className="flex items-center gap-4 rounded-md bg-surface-200 p-4 shadow-soft"
@@ -27,6 +27,13 @@ async function Archived() {
               Archivé
             </span>
           </Link>
+          <a
+            href={`/vehicles/${v.id}/export`}
+            download
+            className="text-body-sm min-h-11 self-start px-1 underline"
+          >
+            Export PDF
+          </a>
         </li>
       ))}
     </ul>

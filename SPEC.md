@@ -249,11 +249,11 @@ Généré à la demande pour un véhicule (actif ou archivé), généré côté 
 1. Fiche générée en PDF :
    - identité du véhicule, km actuel ;
    - fluides ;
-   - plan d'entretien avec statuts ;
+   - plan d'entretien avec statuts (véhicule actif) ; véhicule archivé : plan sans statut ni échéance, avec mention d'archivage (§6.3) ;
    - historique complet des interventions, avec opérations, pièces et montants (pièces, MO, total) ;
    - total général ;
    - date d'édition.
-2. Fusion des PDF de factures, dans l'ordre chronologique des interventions.
+2. Fusion des PDF de factures, dans l'ordre chronologique des interventions. Une facture illisible (absente, chiffrée, corrompue) est ignorée et signalée dans la fiche (« Factures non incluses »).
 3. Téléchargement d'un PDF unique : `carnet-<immatriculation>-<date>.pdf`.
 
 ## 11. Analytique
@@ -283,7 +283,7 @@ Saisie manuelle dans l'interface, pas de fonction d'import (3 véhicules, sans m
 | UI | Tailwind CSS + shadcn/ui (composants copiés dans le projet) |
 | Base | SQLite, mode WAL, fichier sur volume |
 | Fichiers | Système de fichiers, sur volume |
-| PDF | Génération côté application : fiche du carnet (pdf-lib / lib de mise en page) et fusion des factures ; pas de conversion d'images (§8) |
+| PDF | Génération côté application : fiche du carnet et fusion (pdf-lib) des factures ; pas de conversion d'images (§8) |
 | ORM / migrations | Drizzle ORM + better-sqlite3, migrations drizzle-kit |
 | Auth | Better Auth (provider Google OIDC), sessions en base, cookie HttpOnly, Secure, SameSite=Lax |
 

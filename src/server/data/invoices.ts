@@ -1,5 +1,5 @@
 import "server-only";
-import { and, eq, inArray } from "drizzle-orm";
+import { and, asc, eq, inArray } from "drizzle-orm";
 import { getDb } from "@/server/db/client";
 import { intervention, invoiceFile, vehicle } from "@/server/db/schema";
 import { writableVehicleIds } from "./vehicles";
@@ -25,6 +25,22 @@ export function getInvoiceFile(ownerId: string, invoiceId: number) {
       .where(and(eq(invoiceFile.id, invoiceId), eq(vehicle.ownerId, ownerId)))
       .get() ?? null
   );
+}
+
+/** Every invoice of an owned vehicle (archived included), oldest intervention first (SPEC §10). */
+export function listVehicleInvoiceFiles(ownerId: string, vehicleId: number) {
+  return getDb()
+    .select({
+      interventionDate: intervention.date,
+      originalName: invoiceFile.originalName,
+      storedPdfPath: invoiceFile.storedPdfPath,
+    })
+    .from(invoiceFile)
+    .innerJoin(intervention, eq(intervention.id, invoiceFile.interventionId))
+    .innerJoin(vehicle, eq(vehicle.id, intervention.vehicleId))
+    .where(and(eq(vehicle.id, vehicleId), eq(vehicle.ownerId, ownerId)))
+    .orderBy(asc(intervention.date), asc(intervention.id), asc(invoiceFile.id))
+    .all();
 }
 
 /** Vehicle id of an owned, non-archived vehicle's intervention (write guard for files). */

@@ -24,7 +24,7 @@ interface Base {
 }
 
 /** Latest intervention containing the operation type (SPEC §6.3 point 1). */
-function lastRealization(
+export function lastRealization(
   operationTypeId: number,
   interventions: Intervention[],
   replacements: OdometerReplacement[],

@@ -12,6 +12,7 @@ import {
   addInvoiceFiles,
   deleteInvoiceFile,
   getInvoiceFile,
+  listVehicleInvoiceFiles,
   writableInterventionVehicle,
 } from "./invoices";
 import {
@@ -90,6 +91,31 @@ describe("invoice files", () => {
     expect(addInvoiceFiles(a, interventionId, [row])).toBe(false);
     expect(deleteInvoiceFile(a, id)).toBeNull();
     expect(getInvoiceFile(a, id)).not.toBeNull();
+  });
+
+  it("lists a vehicle's invoices oldest first, archived included, owner only", () => {
+    const earlier = createIntervention(a, vehicleId, {
+      date: "2026-01-01",
+      displayedKm: 500,
+      provider: "Moi-même",
+      laborCostCents: 0,
+      notes: null,
+      ops: [],
+    })!;
+    addInvoiceFiles(a, interventionId, [
+      { ...row, originalName: "c.pdf" },
+      { ...row, originalName: "d.pdf" },
+    ]);
+    addInvoiceFiles(a, earlier, [{ ...row, originalName: "b.pdf" }]);
+    const names = (owner: string) =>
+      listVehicleInvoiceFiles(owner, vehicleId).map((r) => r.originalName);
+    expect(names(a)).toEqual(["b.pdf", "c.pdf", "d.pdf"]);
+    expect(listVehicleInvoiceFiles(a, vehicleId)[0]!.interventionDate).toBe(
+      "2026-01-01",
+    );
+    archiveVehicle(a, vehicleId, { archivedAt: "2026-04-01", reason: null });
+    expect(names(a)).toHaveLength(3);
+    expect(names(b)).toEqual([]);
   });
 
   it("rows disappear with their intervention or vehicle", () => {

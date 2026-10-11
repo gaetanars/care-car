@@ -34,8 +34,11 @@ Critères communs à chaque jalon : `pnpm check` vert, E2E des parcours touchés
 - [x] **7. Flux iCal** (§9) — `VALARM` J-28, jeton ≥ 256 bits haché.
   - Livré : `/calendar/<token>.ics` (journée entière, UID stable, `VALARM` J-28, empreinte SHA-256 + index unique, comparaison en temps constant, `user.allowed` revérifié), écran Paramètres (`/account`) avec génération/régénération, URL affichée une seule fois (SPEC §7 ajusté), lien depuis le tableau de bord.
   - Reste : vérification manuelle de l'abonnement dans Apple Calendar (alerte J-28 visible).
-- [ ] **8. Export PDF du carnet** (§10) — pdf-lib (fusion) + génération de la fiche côté app.
+- [x] **8. Export PDF du carnet** (§10) — pdf-lib (fusion) + génération de la fiche côté app.
+  - Livré : `GET /vehicles/[id]/export` (`attachment`, `carnet-<plaque>-<date>.pdf`, 404 si anonyme ou non propriétaire), fiche A4 (`src/server/services/pdf.ts`, mise en page manuelle Helvetica) alimentée par `src/app/vehicles/logbook.ts`, factures fusionnées par date d'intervention. Boutons sur la Synthèse et la liste des archivés.
+  - Décisions : véhicule archivé = plan sans statut ni échéance, avec mention d'archivage (SPEC §10 ajusté) ; facture illisible (absente, chiffrée, corrompue) ignorée, listée dans « Factures non incluses » et journalisée ; ordre chronologique croissant ; km affiché, « (réel N km) » si différent ; texte hors WinAnsi remplacé par `?`.
+  - Reste : ouverture manuelle d'un carnet réel (accents, pagination) à faire.
 - [x] **9. Analytique** (§11) — pièces par catégorie, MO séparée non ventilée.
   - Livré : `/analytics` (global, filtre véhicule, entrée « Analyse » de la nav) et onglet `/vehicles/[id]/analytics` (même vue, véhicule figé). Moteur `src/domain/analytics.ts`, accès `src/server/data/analytics.ts`, graphique SVG serveur sans dépendance (jetons `--chart-1..5`).
   - Décisions : filtres en query string (`vehicle`, `year`, `from`, `to`, `category`), valeur invalide ignorée, `from`/`to` l'emportent sur `year`. Km d'une période = km réel interpolé au jour aux bornes, borné au 1er/dernier point (pas d'extrapolation), négatif ramené à 0 ; 0 km ⇒ coût au km « — » ; global = somme des km par véhicule. Filtre catégorie : pièces de la catégorie seulement, MO masquée avec rappel, courbe km inchangée. Véhicules archivés inclus. Coût au km = (pièces + MO) / km sans filtre catégorie.
-  - Reste : palette du graphique non passée au validateur dataviz ; export PDF (jalon 8) toujours ouvert.
+  - Reste : palette du graphique non passée au validateur dataviz.

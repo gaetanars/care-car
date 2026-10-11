@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { computeDue, computeVehicleDues } from "./due";
+import { computeDue, computeVehicleDues, lastRealization } from "./due";
 import { mileagePoints } from "./odometer";
 import type {
   Intervention,
@@ -316,5 +316,20 @@ describe("dernière réalisation (SPEC §7)", () => {
   it("ignores a contre-visite", () => {
     const d = due(ct, [intervention("2026-02-01", 9_000, 3)]);
     expect(d.lastRealization).toBeNull();
+  });
+});
+
+describe("lastRealization", () => {
+  it("returns the latest intervention containing the type, with real km", () => {
+    const list = [
+      intervention("2025-01-01", 10_000, 1),
+      intervention("2026-01-01", 20_000, 1),
+      intervention("2026-02-01", 21_000, 2),
+    ];
+    expect(lastRealization(1, list, [])).toEqual({
+      date: "2026-01-01",
+      km: 20_000,
+    });
+    expect(lastRealization(3, list, [])).toBeNull();
   });
 });

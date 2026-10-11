@@ -19,6 +19,12 @@ export function isPdf(buf: Uint8Array): boolean {
   );
 }
 
+/** RFC 5987 `filename*` plus an ASCII fallback. */
+export function disposition(kind: "inline" | "attachment", name: string) {
+  const ascii = name.replace(/[^\x20-\x7e]|["\\]/g, "_");
+  return `${kind}; filename="${ascii}"; filename*=UTF-8''${encodeURIComponent(name).replace(/['()*]/g, (c) => `%${c.charCodeAt(0).toString(16).toUpperCase()}`)}`;
+}
+
 /** Absolute path of a stored file; refuses anything outside `DATA_DIR/files`. */
 export function invoiceAbsolutePath(rel: string): string {
   const root = filesRoot();
