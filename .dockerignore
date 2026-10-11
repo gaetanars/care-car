@@ -1,0 +1,12 @@
+.git
+.next
+node_modules
+data
+.e2e-data
+coverage
+playwright-report
+test-results
+.env*
+!.env.example
+.claude
+CLAUDE.local.md

@@ -1,0 +1,10 @@
+.next
+node_modules
+pnpm-lock.yaml
+coverage
+data
+.e2e-data
+drizzle/meta
+playwright-report
+test-results
+SPEC.md

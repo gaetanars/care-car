@@ -1,0 +1,28 @@
+services:
+  app:
+    build:
+      context: .
+      platforms: [linux/amd64]
+    platform: linux/amd64
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    env_file: .env
+    environment:
+      DATA_DIR: /data
+      GOTENBERG_URL: http://gotenberg:3000
+    volumes:
+      - ./data:/data
+    depends_on:
+      - gotenberg
+    networks: [internal, default]
+
+  # Internal network only: no published port (SPEC §13.4).
+  gotenberg:
+    image: gotenberg/gotenberg:8
+    restart: unless-stopped
+    networks: [internal]
+
+networks:
+  internal:
+    internal: true

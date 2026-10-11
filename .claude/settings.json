@@ -1,0 +1,71 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(pnpm run:*)",
+      "Bash(pnpm exec:*)",
+      "Bash(pnpm test:*)",
+      "Bash(pnpm check)",
+      "Bash(pnpm typecheck)",
+      "Bash(pnpm lint:*)",
+      "Bash(pnpm format:*)",
+      "Bash(pnpm add:*)",
+      "Bash(pnpm dlx shadcn@latest:*)",
+      "Bash(pnpm db\\:generate:*)",
+      "Bash(pnpm db\\:migrate:*)",
+      "Bash(pnpm test\\:e2e:*)",
+      "Bash(pnpm drizzle-kit:*)",
+      "Bash(git status:*)",
+      "Bash(git diff:*)",
+      "Bash(git log:*)",
+      "Bash(git show:*)",
+      "Bash(git branch:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)"
+    ],
+    "ask": ["Bash(git push:*)", "Bash(gh pr create:*)"],
+    "deny": [
+      "Read(./.env)",
+      "Read(./.env.local)",
+      "Read(./.env.production)",
+      "Read(./.env.development)",
+      "Read(./.env.*.local)",
+      "Edit(./data/**)",
+      "Write(./data/**)"
+    ]
+  },
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/protect.sh"
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/format.sh"
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/check-on-stop.sh",
+            "timeout": 300
+          }
+        ]
+      }
+    ]
+  }
+}
