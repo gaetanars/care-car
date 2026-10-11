@@ -74,6 +74,15 @@ L'application écoute sur le port `3000`. `DATA_DIR` est déjà fixé par le `do
 
 Vérification : `curl http://localhost:3000/api/health`.
 
+#### Image publiée
+
+La CI publie l'image sur `ghcr.io/gaetanars/care-car` : `main` (dernier commit de `main`), `X.Y.Z`, `X.Y` et `latest` (releases `vX.Y.Z`; une pré-version ne produit que son tag exact). Le package étant privé, un login est requis (PAT classique, scope `read:packages`) :
+
+```bash
+echo $PAT | docker login ghcr.io -u <user> --password-stdin
+docker pull ghcr.io/gaetanars/care-car:latest
+```
+
 ### 2. NAS Synology (DSM)
 
 Cible initiale du projet (DS918+, `linux/amd64`).
@@ -98,11 +107,12 @@ Cible initiale du projet (DS918+, `linux/amd64`).
 Même image, **une seule instance** avec un **disque persistant** monté sur `DATA_DIR` (ex. VM + Docker, Fly.io avec volume, service de conteneurs avec stockage attaché). Placer un reverse proxy HTTPS devant (Caddy, Traefik, load balancer du fournisseur). Pas de Cloud Run, Lambda ou Vercel : la base est un fichier local.
 
 ```bash
-docker buildx build --platform linux/amd64 -t care-car .
 docker run -d --name care-car -p 3000:3000 \
   --env-file .env -e DATA_DIR=/data \
-  -v /srv/care-car:/data care-car
+  -v /srv/care-car:/data ghcr.io/gaetanars/care-car:latest
 ```
+
+Build local en alternative : `docker buildx build --platform linux/amd64 -t care-car .`, puis remplacer l'image par `care-car`.
 
 ### 4. Sans Docker (Node)
 
