@@ -1,6 +1,6 @@
 # syntax=docker/dockerfile:1
 # Build for the DS918+: docker buildx build --platform linux/amd64 (SPEC §13.4)
-FROM node:24-slim AS base
+FROM node:26-slim AS base
 ENV PNPM_HOME=/pnpm PATH=/pnpm:$PATH NEXT_TELEMETRY_DISABLED=1
 RUN npm i -g pnpm@12.11.2
 WORKDIR /app
@@ -13,7 +13,7 @@ FROM deps AS build
 COPY . .
 RUN pnpm build
 
-FROM node:24-slim AS runner
+FROM node:26-slim AS runner
 ENV NODE_ENV=production NEXT_TELEMETRY_DISABLED=1 PORT=3000 HOSTNAME=0.0.0.0 DATA_DIR=/data
 WORKDIR /app
 COPY --from=build /app/.next/standalone ./

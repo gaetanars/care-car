@@ -116,7 +116,7 @@ Build local en alternative : `docker buildx build --platform linux/amd64 -t care
 
 ### 4. Sans Docker (Node)
 
-Node ≥ 24 et pnpm requis.
+Node ≥ 26 et pnpm requis.
 
 ```bash
 pnpm install --frozen-lockfile
