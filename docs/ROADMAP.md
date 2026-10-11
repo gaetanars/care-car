@@ -18,8 +18,11 @@ Critères communs à chaque jalon : `pnpm check` vert, E2E des parcours touchés
   - Reste à valider à la main (client OAuth réel, non testable en E2E) : connexion de `ADMIN_EMAIL`, refus d'un email inconnu, lien d'un email pré-inscrit, retrait = déconnexion immédiate.
   - Reporté : écran Admin du catalogue et des plans types (§2.1, §4) — à rattacher à un jalon ; dépend de l'export Numbers (jalon 10) pour le contenu.
   - À trancher (§4) : retrait de l'admin `ADMIN_EMAIL` — il est réinscrit à chaque démarrage.
-- [ ] **4. Véhicules, plan, fluides, pièces** (§6.6, §7)
+- [x] **4. Véhicules, plan, fluides, pièces** (§6.6, §7)
   - Sortie : actions serveur validant les entrées (zod : dates ISO `YYYY-MM-DD`, chaînes non vides, montants entiers ≥ 0) avant d'appeler `src/server/data`, qui ne valide pas (CHECK en base pour les énumérations seulement).
+  - Livré : CRUD véhicule (énergie non modifiable), archivage/désarchivage (écritures refusées côté data si archivé), suppression avec immatriculation exacte, plan (une ligne par type d'opération, index unique), fluides, pièces + URLs http(s).
+  - Décision : la contre-visite n'est pas suivie, seule la date du CT initial compte (§6.5) ; le type est exclu de l'ajout au plan. À reprendre au jalon 5 (saisie d'intervention) et dans le SPEC §6.6.
+  - Reste : onglets Synthèse, Carnet, Relevés, Analyse (jalons 5, 6, 9) ; la page d'accueil liste provisoirement les véhicules (tableau de bord au jalon 6) ; `/vehicles/<inconnu>` affiche « Page introuvable » mais avec statut HTTP 200 (notFound levé sous `<Suspense>`, cacheComponents).
 - [ ] **5. Relevés, interventions, factures** (§6.1, §8)
   - Sortie : factures en PDF (images converties), magic bytes, 20 Mo, accès après contrôle du propriétaire ; suppression d'un véhicule ou d'une intervention supprime aussi les fichiers sur disque (§5).
 - [ ] **6. Tableau de bord + synthèse** (§7)

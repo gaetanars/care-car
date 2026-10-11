@@ -7,6 +7,7 @@ import {
   real,
   sqliteTable,
   text,
+  uniqueIndex,
 } from "drizzle-orm/sqlite-core";
 import type { OperationTypeCode } from "@/domain/types";
 
@@ -262,7 +263,11 @@ export const planItem = sqliteTable(
       sql`${t.intervalKm} is not null or ${t.intervalMonths} is not null`,
     ),
     oneOf("plan_item_baseline_valid", t.baseline, BASELINES),
-    index("plan_item_vehicle_idx").on(t.vehicleId),
+    // One line per operation type; the prefix also serves lookups by vehicle.
+    uniqueIndex("plan_item_vehicle_operation_type_unique").on(
+      t.vehicleId,
+      t.operationTypeId,
+    ),
   ],
 );
 

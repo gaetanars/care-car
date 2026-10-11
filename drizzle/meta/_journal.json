@@ -15,6 +15,13 @@
       "when": 1791705195113,
       "tag": "0001_bright_khan",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1791707952322,
+      "tag": "0002_black_gressill",
+      "breakpoints": true
     }
   ]
 }
