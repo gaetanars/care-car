@@ -1,0 +1,61 @@
+{
+  "operationTypes": [
+    {
+      "code": "controle_technique",
+      "name": "Contrôle technique",
+      "category": "reglementaire"
+    },
+    {
+      "code": "contre_visite_ct",
+      "name": "Contre-visite CT",
+      "category": "reglementaire"
+    },
+    {
+      "code": null,
+      "name": "Vidange",
+      "category": "entretien"
+    }
+  ],
+  "planTemplates": [
+    {
+      "energy": "essence",
+      "items": [
+        {
+          "operationType": "Contrôle technique",
+          "intervalKm": null,
+          "intervalMonths": 24
+        }
+      ]
+    },
+    {
+      "energy": "diesel",
+      "items": [
+        {
+          "operationType": "Contrôle technique",
+          "intervalKm": null,
+          "intervalMonths": 24
+        }
+      ]
+    },
+    {
+      "energy": "hybride",
+      "items": [
+        {
+          "operationType": "Contrôle technique",
+          "intervalKm": null,
+          "intervalMonths": 24
+        }
+      ]
+    },
+    {
+      "energy": "electrique",
+      "items": [
+        {
+          "operationType": "Contrôle technique",
+          "intervalKm": null,
+          "intervalMonths": 24
+        }
+      ]
+    }
+  ]
+}

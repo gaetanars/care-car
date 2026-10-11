@@ -3,5 +3,5 @@ export async function register() {
   const { runStartupMigrations } = await import("@/server/data/startup");
   const { logger } = await import("@/server/logger");
   runStartupMigrations();
-  logger.info("migrations applied");
+  logger.info("migrations applied, catalogue seeded");
 }

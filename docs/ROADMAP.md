@@ -8,15 +8,17 @@ Critères communs à chaque jalon : `pnpm check` vert, E2E des parcours touchés
   - Sortie : `/api/health` OK ; page protégée accessible via la fixture de session ; couverture branches 100 % sur `src/domain`.
 - [x] **1. Moteur de règles** (§6) — module pur `src/domain`, sans dépendance.
   - Sortie : km réel, projection, échéances, statuts, contrôle technique, plans ; tests exhaustifs (changement de compteur, sans projection, CT 48/24 mois, contre-visite).
-- [ ] **2. Schéma + couche d'accès + isolation** (§5, §4)
+- [x] **2. Schéma + couche d'accès + isolation** (§5, §4)
   - Sortie : schéma §5 migré ; fonctions `src/server/data` avec `ownerId` ; test d'isolation pour chacune.
   - À migrer : colonne `operation_type.code` (nullable, unique ; `controle_technique | contre_visite_ct`), requise par le moteur (SPEC §5, §14 #10).
-  - Dépendance : `seed/catalogue.json` suppose l'export Numbers (§14 #7). En attendant, catalogue minimal **provisoire** (contrôle technique, contre-visite, vidange).
+  - Dépendance : `seed/catalogue.json` suppose l'export Numbers (§14 #7). En attendant, catalogue minimal **provisoire** (contrôle technique, contre-visite, vidange ; plans = CT seul), à remplacer par l'export Numbers.
+  - Fonctions d'accès des entités filles (fluides, pièces, relevés, interventions, factures) ajoutées aux jalons 4–5.
 - [ ] **3. Auth, liste blanche, admin** (§4, §13.6)
   - Sortie : connexion Google, `ADMIN_EMAIL` inscrit d'office, retrait = sessions supprimées, gestion de la liste blanche.
 - [ ] **4. Véhicules, plan, fluides, pièces** (§6.6, §7)
+  - Sortie : actions serveur validant les entrées (zod : dates ISO `YYYY-MM-DD`, chaînes non vides, montants entiers ≥ 0) avant d'appeler `src/server/data`, qui ne valide pas (CHECK en base pour les énumérations seulement).
 - [ ] **5. Relevés, interventions, factures** (§6.1, §8)
-  - Sortie : factures en PDF (images converties), magic bytes, 20 Mo, accès après contrôle du propriétaire.
+  - Sortie : factures en PDF (images converties), magic bytes, 20 Mo, accès après contrôle du propriétaire ; suppression d'un véhicule ou d'une intervention supprime aussi les fichiers sur disque (§5).
 - [ ] **6. Tableau de bord + synthèse** (§7)
 - [ ] **7. Flux iCal** (§9) — `VALARM` J-28, jeton ≥ 256 bits haché.
 - [ ] **8. Export PDF du carnet** (§10) — via Gotenberg.
