@@ -339,7 +339,7 @@ Aucune tâche planifiée ni worker en V1 : échéances, statuts et flux iCal son
 | 5 | Coût par catégorie | Pièces par catégorie, MO en ligne séparée non ventilée (§11) |
 | 6 | Session et révocation | Liste blanche vérifiée à chaque requête, sessions supprimées au retrait, 30 jours glissants (§13.6) |
 | 7 | Catalogue et plans types initiaux | Hors spec : fichier `seed/catalogue.json`, rédigé à partir de l'export Numbers. Plan électrique tiré de la e-2008 ; plan hybride = copie du plan essence. |
-| 8 | Import CSV de l'existant | Abandonné : l'export ne contient aucun montant et ne permet pas de créer un véhicule seul ; reprise par saisie manuelle de 3 véhicules (§12). |
+| 8 | Import CSV de l'existant | Abandonné : l'export ne contient aucun montant et manque des champs obligatoires du véhicule (marque, énergie, 1re immatriculation, plaque de la e-2008) ainsi que le km des CT et le prestataire ; reprise par saisie manuelle de 3 véhicules (§12). |
 | 9 | `VALARM` | Client cible Apple Calendar : `VALARM` conservé, pas de second événement (§9) |
 | 10 | Code des types d'opération | Colonne `operation_type.code` (nullable, unique) : le moteur identifie le CT par ce code, jamais par id ni nom. Ajout de mois ramené au dernier jour du mois cible. Date projetée en arrondi bas, sans borne. km/jour ≤ 0 ⇒ pas de projection (§5, §6.2, §6.3, §6.5). |
 | 11 | Factures et contre-visite | PDF seul, 10 Mo par envoi, conversion d'images reportée (§8). Contre-visite CT saisissable dans une intervention (coût tracé), sans effet sur l'échéance, jamais ajoutée au plan (§6.5, §6.6) |

@@ -11,12 +11,12 @@ Critères communs à chaque jalon : `pnpm check` vert, E2E des parcours touchés
 - [x] **2. Schéma + couche d'accès + isolation** (§5, §4)
   - Sortie : schéma §5 migré ; fonctions `src/server/data` avec `ownerId` ; test d'isolation pour chacune.
   - À migrer : colonne `operation_type.code` (nullable, unique ; `controle_technique | contre_visite_ct`), requise par le moteur (SPEC §5, §14 #10).
-  - Catalogue définitif : `seed/catalogue.json` rédigé depuis l'export Numbers (§14 #7).
+  - Catalogue définitif : `seed/catalogue.json` rédigé depuis l'export Numbers (§14 #7). Une base existante ne le charge pas (seed sur table vide) : la recréer (données jetables).
   - Fonctions d'accès des entités filles (fluides, pièces, relevés, interventions, factures) ajoutées aux jalons 4–5.
 - [x] **3. Auth, liste blanche, admin** (§4, §13.6)
   - Sortie : connexion Google, `ADMIN_EMAIL` inscrit d'office, retrait = sessions supprimées, gestion de la liste blanche.
   - Reste à valider à la main (client OAuth réel, non testable en E2E) : connexion de `ADMIN_EMAIL`, refus d'un email inconnu, lien d'un email pré-inscrit, retrait = déconnexion immédiate.
-  - Reporté : écran Admin du catalogue et des plans types (§2.1, §4) — à rattacher à un jalon.
+  - Reporté : écran Admin du catalogue et des plans types (§2.1, §4) — rattaché au jalon 6.
   - À trancher (§4) : retrait de l'admin `ADMIN_EMAIL` — il est réinscrit à chaque démarrage.
 - [x] **4. Véhicules, plan, fluides, pièces** (§6.6, §7)
   - Sortie : actions serveur validant les entrées (zod : dates ISO `YYYY-MM-DD`, chaînes non vides, montants entiers ≥ 0) avant d'appeler `src/server/data`, qui ne valide pas (CHECK en base pour les énumérations seulement).
@@ -28,6 +28,7 @@ Critères communs à chaque jalon : `pnpm check` vert, E2E des parcours touchés
   - Livré : relevés, changements de compteur, interventions (création, édition, suppression), factures PDF, avertissement de km incohérent, contre-visite saisissable sans effet sur l'échéance.
   - Reste : raccourci « + Relevé » depuis le tableau de bord (jalon 6) ; conversion d'images en PDF reportée (SPEC §2.2, §14 #11).
 - [ ] **6. Tableau de bord + synthèse** (§7)
+  - Inclut l'écran Admin du catalogue et des plans types (§2.1, §4, §7), reporté du jalon 3.
 - [ ] **7. Flux iCal** (§9) — `VALARM` J-28, jeton ≥ 256 bits haché.
 - [ ] **8. Export PDF du carnet** (§10) — via Gotenberg.
 - [ ] **9. Analytique** (§11) — pièces par catégorie, MO séparée non ventilée.
