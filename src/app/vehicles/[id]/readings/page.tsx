@@ -1,6 +1,6 @@
 import { Suspense } from "react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
+import { EditDialog } from "@/components/edit-dialog";
 import { Km } from "@/components/km";
 import { realKm } from "@/domain/odometer";
 import { listReadings, listReplacements } from "@/server/data/odometer";
@@ -31,7 +31,11 @@ async function Readings({ params }: { params: Promise<{ id: string }> }) {
       {!archived && (
         <section className="flex flex-col gap-3">
           <h2 className="text-heading">Nouveau relevé</h2>
-          <ActionForm action={addReadingAction} submitLabel="Ajouter le relevé">
+          <ActionForm
+            action={addReadingAction}
+            submitLabel="Ajouter le relevé"
+            className="grid gap-4 sm:grid-cols-[1fr_1fr_auto] sm:items-end [&>[role=alert]]:col-span-full sm:[&>button]:self-end"
+          >
             {hidden}
             <Field
               label="Kilométrage affiché"
@@ -55,103 +59,162 @@ async function Readings({ params }: { params: Promise<{ id: string }> }) {
 
       <section className="flex flex-col gap-3">
         <h2 className="text-heading">Relevés</h2>
-        <ul className="flex flex-col gap-2">
-          {readings.length === 0 && <li>Aucun relevé.</li>}
-          {readings.map((r) => (
-            <li key={r.id}>
-              <Card size="sm" data-testid={`reading-${r.id}`}>
-                <CardContent className="flex items-center justify-between gap-2">
-                  <span className="tabular-nums">
-                    {formatDate(r.date)} ·{" "}
+        {readings.length === 0 ? (
+          <p>Aucun relevé.</p>
+        ) : (
+          <table className="text-body-sm w-full">
+            <caption className="sr-only">Relevés</caption>
+            <thead>
+              <tr className="border-b border-line text-left text-ink-muted">
+                <th scope="col" className="py-2 pr-3 font-semibold">
+                  Date
+                </th>
+                <th scope="col" className="num py-2 pr-3 text-right">
+                  Kilométrage
+                </th>
+                {!archived && (
+                  <th scope="col" className="py-2 text-right">
+                    <span className="sr-only">Action</span>
+                  </th>
+                )}
+              </tr>
+            </thead>
+            <tbody>
+              {readings.map((r) => (
+                <tr
+                  key={r.id}
+                  data-testid={`reading-${r.id}`}
+                  className="border-b border-line"
+                >
+                  <td className="py-2 pr-3">{formatDate(r.date)}</td>
+                  <td className="num py-2 pr-3 text-right tabular-nums">
                     <Km
                       displayedKm={r.displayedKm}
                       realKm={realKm(r.date, r.displayedKm, replacements)}
                     />
-                  </span>
+                  </td>
                   {!archived && (
-                    <form action={deleteReadingAction}>
-                      {hidden}
-                      <input type="hidden" name="readingId" value={r.id} />
-                      <Button
-                        type="submit"
-                        variant="ghost"
-                        size="xs"
-                        aria-label={`Supprimer le relevé du ${formatDate(r.date)}`}
-                      >
-                        Supprimer
-                      </Button>
-                    </form>
+                    <td className="py-2 text-right">
+                      <form action={deleteReadingAction}>
+                        {hidden}
+                        <input type="hidden" name="readingId" value={r.id} />
+                        <Button
+                          type="submit"
+                          variant="ghost"
+                          size="sm"
+                          aria-label={`Supprimer le relevé du ${formatDate(r.date)}`}
+                        >
+                          Supprimer
+                        </Button>
+                      </form>
+                    </td>
                   )}
-                </CardContent>
-              </Card>
-            </li>
-          ))}
-        </ul>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
       </section>
 
       <section className="flex flex-col gap-3 border-t border-line pt-5">
-        <h2 className="text-heading">Changements de compteur</h2>
-        <ul className="flex flex-col gap-2">
-          {replacements.length === 0 && <li>Aucun changement de compteur.</li>}
-          {replacements.map((c) => (
-            <li key={c.id}>
-              <Card size="sm" data-testid={`replacement-${c.id}`}>
-                <CardContent className="flex items-center justify-between gap-2">
-                  <span className="tabular-nums">
-                    {formatDate(c.date)} · {number.format(c.oldCounterKm)} km →{" "}
-                    {number.format(c.newCounterKm)} km
-                  </span>
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <h2 className="text-heading">Changements de compteur</h2>
+          {!archived && (
+            <EditDialog
+              triggerLabel="Ajouter un changement"
+              title="Ajouter un changement de compteur"
+              action={addReplacementAction}
+              submitLabel="Ajouter le changement"
+            >
+              {hidden}
+              <Field
+                label="Date du changement"
+                name="date"
+                scope="r-"
+                type="date"
+                defaultValue={today()}
+                required
+              />
+              <Field
+                label="Km de l'ancien compteur"
+                name="oldCounterKm"
+                type="number"
+                inputMode="numeric"
+                min={0}
+                required
+              />
+              <Field
+                label="Km du nouveau compteur"
+                name="newCounterKm"
+                type="number"
+                inputMode="numeric"
+                min={0}
+                required
+              />
+            </EditDialog>
+          )}
+        </div>
+        {replacements.length === 0 ? (
+          <p>Aucun changement de compteur.</p>
+        ) : (
+          <table className="text-body-sm w-full">
+            <caption className="sr-only">Changements de compteur</caption>
+            <thead>
+              <tr className="border-b border-line text-left text-ink-muted">
+                <th scope="col" className="py-2 pr-3 font-semibold">
+                  Date
+                </th>
+                <th scope="col" className="num py-2 pr-3 text-right">
+                  Ancien compteur
+                </th>
+                <th scope="col" className="num py-2 pr-3 text-right">
+                  Nouveau compteur
+                </th>
+                {!archived && (
+                  <th scope="col" className="py-2 text-right">
+                    <span className="sr-only">Action</span>
+                  </th>
+                )}
+              </tr>
+            </thead>
+            <tbody>
+              {replacements.map((c) => (
+                <tr
+                  key={c.id}
+                  data-testid={`replacement-${c.id}`}
+                  className="border-b border-line"
+                >
+                  <td className="py-2 pr-3">{formatDate(c.date)}</td>
+                  <td className="num py-2 pr-3 text-right tabular-nums">
+                    {number.format(c.oldCounterKm)}&nbsp;km
+                  </td>
+                  <td className="num py-2 pr-3 text-right tabular-nums">
+                    {number.format(c.newCounterKm)}&nbsp;km
+                  </td>
                   {!archived && (
-                    <form action={deleteReplacementAction}>
-                      {hidden}
-                      <input type="hidden" name="replacementId" value={c.id} />
-                      <Button
-                        type="submit"
-                        variant="ghost"
-                        size="xs"
-                        aria-label={`Supprimer le changement de compteur du ${formatDate(c.date)}`}
-                      >
-                        Supprimer
-                      </Button>
-                    </form>
+                    <td className="py-2 text-right">
+                      <form action={deleteReplacementAction}>
+                        {hidden}
+                        <input
+                          type="hidden"
+                          name="replacementId"
+                          value={c.id}
+                        />
+                        <Button
+                          type="submit"
+                          variant="ghost"
+                          size="sm"
+                          aria-label={`Supprimer le changement de compteur du ${formatDate(c.date)}`}
+                        >
+                          Supprimer
+                        </Button>
+                      </form>
+                    </td>
                   )}
-                </CardContent>
-              </Card>
-            </li>
-          ))}
-        </ul>
-        {!archived && (
-          <ActionForm
-            action={addReplacementAction}
-            submitLabel="Ajouter le changement"
-            variant="secondary"
-          >
-            {hidden}
-            <Field
-              label="Date du changement"
-              name="date"
-              scope="r-"
-              type="date"
-              defaultValue={today()}
-              required
-            />
-            <Field
-              label="Km de l'ancien compteur"
-              name="oldCounterKm"
-              type="number"
-              inputMode="numeric"
-              min={0}
-              required
-            />
-            <Field
-              label="Km du nouveau compteur"
-              name="newCounterKm"
-              type="number"
-              inputMode="numeric"
-              min={0}
-              required
-            />
-          </ActionForm>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         )}
       </section>
     </>

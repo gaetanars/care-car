@@ -8,7 +8,7 @@ import {
   updateVehicleAction,
 } from "../../actions";
 import { Field } from "../../fields";
-import { ENERGY_LABELS } from "../../labels";
+import { ENERGY_LABELS, VEHICLE_GRID } from "../../labels";
 import { loadVehicle } from "../load";
 import { VehicleIdentity } from "../identity";
 
@@ -38,7 +38,11 @@ async function Identity({ params }: { params: Promise<{ id: string }> }) {
 
   return (
     <>
-      <ActionForm action={updateVehicleAction} submitLabel="Enregistrer">
+      <ActionForm
+        action={updateVehicleAction}
+        submitLabel="Enregistrer"
+        className={VEHICLE_GRID}
+      >
         {hidden}
         <Field
           label="Immatriculation"

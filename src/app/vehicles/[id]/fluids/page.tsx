@@ -1,8 +1,7 @@
 import { Suspense } from "react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
+import { EditDialog } from "@/components/edit-dialog";
 import { listFluids } from "@/server/data/fluids";
-import { ActionForm } from "../../action-form";
 import {
   createFluidAction,
   deleteFluidAction,
@@ -22,32 +21,99 @@ async function Fluids({ params }: { params: Promise<{ id: string }> }) {
   const { user, vehicle } = await loadVehicle(params);
   const fluids = listFluids(user.id, vehicle.id);
   const archived = vehicle.archivedAt !== null;
+  const hidden = <input type="hidden" name="vehicleId" value={vehicle.id} />;
   return (
-    <>
-      <ul className="flex flex-col gap-3">
-        {fluids.length === 0 && <li>Aucun fluide renseigné.</li>}
-        {fluids.map((f) => (
-          <li key={f.id}>
-            <Card data-testid={`fluid-${f.id}`}>
-              <CardContent className="flex flex-col gap-3">
-                <p className="font-medium">{FLUID_TYPE_LABELS[f.type]}</p>
-                {archived ? (
-                  <p className="text-sm">
-                    {litres.format(f.quantityL)} L · {f.manufacturerStandard}
+    <section className="flex flex-col gap-3">
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <h2 className="text-heading">Fluides</h2>
+        {!archived && (
+          <EditDialog
+            triggerLabel="Ajouter un fluide"
+            title="Ajouter un fluide"
+            action={createFluidAction}
+            submitLabel="Ajouter"
+          >
+            {hidden}
+            <SelectField label="Type" name="type" options={typeOptions} />
+            <Field
+              label="Quantité (L)"
+              name="quantityL"
+              inputMode="decimal"
+              required
+            />
+            <Field
+              label="Norme constructeur"
+              name="manufacturerStandard"
+              required
+              maxLength={200}
+            />
+          </EditDialog>
+        )}
+      </div>
+      {fluids.length === 0 ? (
+        <p>Aucun fluide renseigné.</p>
+      ) : (
+        <table className="text-body-sm w-full">
+          <caption className="sr-only">Fluides</caption>
+          <thead>
+            <tr className="border-b border-line text-left text-ink-muted">
+              <th scope="col" className="py-2 pr-3 font-semibold">
+                Type
+              </th>
+              <th
+                scope="col"
+                className="num py-2 pr-3 text-right max-sm:hidden"
+              >
+                Quantité
+              </th>
+              <th scope="col" className="py-2 pr-3 max-sm:hidden">
+                Norme constructeur
+              </th>
+              {!archived && (
+                <th scope="col" className="py-2 text-right">
+                  <span className="sr-only">Action</span>
+                </th>
+              )}
+            </tr>
+          </thead>
+          <tbody>
+            {fluids.map((f) => (
+              <tr
+                key={f.id}
+                data-testid={`fluid-${f.id}`}
+                className="border-b border-line"
+              >
+                <td className="py-2 pr-3">
+                  <p className="font-medium">{FLUID_TYPE_LABELS[f.type]}</p>
+                  <p className="text-ink-muted sm:hidden">
+                    {litres.format(f.quantityL)}&nbsp;L ·{" "}
+                    {f.manufacturerStandard}
                   </p>
-                ) : (
-                  <>
-                    <ActionForm
+                </td>
+                <td className="num py-2 pr-3 text-right tabular-nums max-sm:hidden">
+                  {litres.format(f.quantityL)}&nbsp;L
+                </td>
+                <td className="py-2 pr-3 max-sm:hidden">
+                  {f.manufacturerStandard}
+                </td>
+                {!archived && (
+                  <td className="py-2 text-right">
+                    <EditDialog
+                      triggerLabel="Modifier"
+                      title={`Modifier : ${FLUID_TYPE_LABELS[f.type]}`}
                       action={updateFluidAction}
                       submitLabel="Enregistrer"
-                      variant="secondary"
-                      size="sm"
+                      danger={
+                        <form action={deleteFluidAction}>
+                          {hidden}
+                          <input type="hidden" name="fluidId" value={f.id} />
+                          <Button type="submit" variant="destructive" size="sm">
+                            Supprimer
+                          </Button>
+                        </form>
+                      }
                     >
-                      <input
-                        type="hidden"
-                        name="vehicleId"
-                        value={vehicle.id}
-                      />
+                      {hidden}
                       <input type="hidden" name="fluidId" value={f.id} />
                       <SelectField
                         label="Type"
@@ -72,47 +138,15 @@ async function Fluids({ params }: { params: Promise<{ id: string }> }) {
                         required
                         maxLength={200}
                       />
-                    </ActionForm>
-                    <form action={deleteFluidAction}>
-                      <input
-                        type="hidden"
-                        name="vehicleId"
-                        value={vehicle.id}
-                      />
-                      <input type="hidden" name="fluidId" value={f.id} />
-                      <Button type="submit" variant="destructive" size="sm">
-                        Supprimer
-                      </Button>
-                    </form>
-                  </>
+                    </EditDialog>
+                  </td>
                 )}
-              </CardContent>
-            </Card>
-          </li>
-        ))}
-      </ul>
-      {!archived && (
-        <section className="flex flex-col gap-3 border-t border-line pt-5">
-          <h2 className="text-heading">Ajouter un fluide</h2>
-          <ActionForm action={createFluidAction} submitLabel="Ajouter">
-            <input type="hidden" name="vehicleId" value={vehicle.id} />
-            <SelectField label="Type" name="type" options={typeOptions} />
-            <Field
-              label="Quantité (L)"
-              name="quantityL"
-              inputMode="decimal"
-              required
-            />
-            <Field
-              label="Norme constructeur"
-              name="manufacturerStandard"
-              required
-              maxLength={200}
-            />
-          </ActionForm>
-        </section>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       )}
-    </>
+    </section>
   );
 }
 

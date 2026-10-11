@@ -49,10 +49,11 @@ test("export: download, merged valid invoice, unreadable one skipped", async ({
   const { plate, base } = await createVehicle(page);
 
   await page.goto(`${base}/fluids`);
-  const add = page.locator("section").filter({ hasText: "Ajouter un fluide" });
+  await page.getByRole("button", { name: "Ajouter un fluide" }).click();
+  const add = page.getByRole("dialog");
   await add.getByLabel("Quantité (L)").fill("4,5");
   await add.getByLabel("Norme constructeur").fill("5W30 C3");
-  await add.getByRole("button", { name: "Ajouter" }).click();
+  await add.getByRole("button", { name: "Ajouter", exact: true }).click();
   await expect(page.getByTestId(/^fluid-/)).toHaveCount(1);
 
   await page.goto(`${base}/interventions/new`);
@@ -135,7 +136,7 @@ test("export: archived vehicle from the archived list", async ({
   await page.goto("/vehicles/archived");
   const download = page.waitForEvent("download");
   await page
-    .getByRole("listitem")
+    .getByRole("row")
     .filter({ hasText: plate })
     .getByRole("link", { name: "Export PDF" })
     .click();

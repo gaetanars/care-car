@@ -74,6 +74,10 @@ Mobile d'abord ; le bureau réorganise les mêmes blocs avec `sidenav`.
 - Paramètres : `FeedCard` du flux iCal. Administration (admin seulement) : liste blanche, catalogue des types, plans types par énergie.
 - Véhicules archivés : lecture seule, export PDF, désarchivage.
 
+### Mise en page
+
+Conteneur `max-w-6xl`. Une liste modifiable (plan, fluides, pièces, relevés, catalogue, plans types) est un tableau en lecture ; l'ajout et la modification passent par un dialogue (`EditDialog`, feuille ancrée en bas sur mobile), jamais par un formulaire ouvert par ligne. Sur mobile, les colonnes secondaires se replient en une ligne de résumé sous le nom. Les formulaires de saisie sont en grille (`sm:grid-cols-2 lg:grid-cols-3`). La Synthèse passe sur 2 colonnes à partir de `lg` : échéances à gauche, km actuel, identité et actions à droite.
+
 ## Intégration Tailwind et shadcn/ui
 
 CareCar utilise Tailwind CSS et shadcn/ui : brancher les tokens sur les variables de shadcn, sans réécrire les composants. Valeurs issues de `tokens.json` (thèmes `light` et `dark`) ; le thème sombre se déclenche par la classe `.dark` (shadcn) à la place de `data-theme`.

@@ -44,9 +44,12 @@ test("admin adds then deactivates an operation type; CT is locked", async ({
   const name = `Type ${randomUUID().slice(0, 8)}`;
   await page.goto("/admin/catalogue");
   await page.waitForLoadState("networkidle");
-  const add = page.locator("section").filter({ hasText: "Ajouter un type" });
+  await page
+    .getByRole("button", { name: "Ajouter un type d'opération" })
+    .click();
+  const add = page.getByRole("dialog");
   await add.getByLabel("Nom").fill(name);
-  await add.getByRole("button", { name: "Ajouter" }).click();
+  await add.getByRole("button", { name: "Ajouter", exact: true }).click();
   const row = page.getByTestId(`type-${name}`);
   await expect(row).toBeVisible();
   await row.getByRole("button", { name: "Désactiver" }).click();
@@ -54,7 +57,7 @@ test("admin adds then deactivates an operation type; CT is locked", async ({
   await expect(row.getByRole("button", { name: "Réactiver" })).toBeVisible();
 
   const ct = page.getByTestId("type-Contrôle technique");
-  await expect(ct.getByRole("button", { name: "Enregistrer" })).toBeVisible();
+  await expect(ct.getByRole("button", { name: "Modifier" })).toBeVisible();
   await expect(ct.getByRole("button", { name: "Désactiver" })).toHaveCount(0);
   await expect(ct.getByRole("button", { name: "Supprimer" })).toHaveCount(0);
 });
@@ -67,9 +70,12 @@ test("a line added to the diesel template reaches new diesel vehicles", async ({
   const name = `Ligne ${randomUUID().slice(0, 8)}`;
   await page.goto("/admin/catalogue");
   await page.waitForLoadState("networkidle");
-  const add = page.locator("section").filter({ hasText: "Ajouter un type" });
+  await page
+    .getByRole("button", { name: "Ajouter un type d'opération" })
+    .click();
+  const add = page.getByRole("dialog");
   await add.getByLabel("Nom").fill(name);
-  await add.getByRole("button", { name: "Ajouter" }).click();
+  await add.getByRole("button", { name: "Ajouter", exact: true }).click();
   await expect(page.getByTestId(`type-${name}`)).toBeVisible();
 
   await page.goto("/admin/plans");
@@ -80,9 +86,11 @@ test("a line added to the diesel template reaches new diesel vehicles", async ({
   const ct = diesel.getByTestId("tpl-diesel-Contrôle technique");
   await expect(ct).toContainText("non modifiable");
   await expect(ct.getByRole("button")).toHaveCount(0);
-  await diesel.getByLabel("Type d'opération").selectOption({ label: name });
-  await diesel.getByLabel("Intervalle (km)").last().fill("33000");
   await diesel.getByRole("button", { name: /Ajouter au plan/ }).click();
+  const dialog = page.getByRole("dialog");
+  await dialog.getByLabel("Type d'opération").selectOption({ label: name });
+  await dialog.getByLabel("Intervalle (km)").fill("33000");
+  await dialog.getByRole("button", { name: "Ajouter", exact: true }).click();
   await expect(diesel.getByTestId(`tpl-diesel-${name}`)).toBeVisible();
 
   await page.goto("/vehicles/new");

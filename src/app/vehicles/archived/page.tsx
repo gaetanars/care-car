@@ -9,34 +9,51 @@ async function Archived() {
   const vehicles = listVehicles(user.id, { archived: true });
   if (vehicles.length === 0) return <p>Aucun véhicule archivé.</p>;
   return (
-    <ul className="flex flex-col gap-3">
-      {vehicles.map((v) => (
-        <li key={v.id} className="flex flex-col gap-2">
-          <Link
-            href={`/vehicles/${v.id}`}
-            className="flex items-center gap-4 rounded-md bg-surface-200 p-4 shadow-soft"
-          >
-            <VehicleAvatar
-              vehicleId={v.id}
-              electric={v.energy === "electrique"}
-            />
-            <span className="text-heading min-w-0 flex-1">
-              {v.plate} · {v.make} {v.model}
-            </span>
-            <span className="text-label rounded-full bg-surface-300 px-3 py-1">
-              Archivé
-            </span>
-          </Link>
-          <a
-            href={`/vehicles/${v.id}/export`}
-            download
-            className="text-body-sm min-h-11 self-start px-1 underline"
-          >
-            Export PDF
-          </a>
-        </li>
-      ))}
-    </ul>
+    <table className="text-body-sm w-full">
+      <caption className="sr-only">Véhicules archivés</caption>
+      <thead>
+        <tr className="border-b border-line text-left text-ink-muted">
+          <th scope="col" className="py-2 pr-3 font-semibold">
+            Véhicule
+          </th>
+          <th scope="col" className="py-2 text-right">
+            <span className="sr-only">Export</span>
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        {vehicles.map((v) => (
+          <tr key={v.id} className="border-b border-line">
+            <td className="py-2 pr-3">
+              <Link
+                href={`/vehicles/${v.id}`}
+                className="flex min-h-11 items-center gap-4"
+              >
+                <VehicleAvatar
+                  vehicleId={v.id}
+                  electric={v.energy === "electrique"}
+                />
+                <span className="text-heading min-w-0 flex-1">
+                  {v.plate} · {v.make} {v.model}
+                </span>
+                <span className="text-label rounded-full bg-surface-300 px-3 py-1">
+                  Archivé
+                </span>
+              </Link>
+            </td>
+            <td className="py-2 text-right">
+              <a
+                href={`/vehicles/${v.id}/export`}
+                download
+                className="inline-flex min-h-11 items-center px-1 underline"
+              >
+                Export PDF
+              </a>
+            </td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
   );
 }
 

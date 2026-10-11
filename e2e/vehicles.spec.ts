@@ -63,25 +63,28 @@ test("fluids: add, edit, delete", async ({ page, signedIn }) => {
   const { base } = await createVehicle(page);
   await page.goto(`${base}/fluids`);
 
-  const add = page.locator("section").filter({ hasText: "Ajouter un fluide" });
-  await add.getByLabel("Quantité (L)").fill("4,5");
-  await add.getByLabel("Norme constructeur").fill("5W30 C3");
-  await add.getByRole("button", { name: "Ajouter" }).click();
-  const card = page.getByTestId(/^fluid-/);
-  await expect(card).toHaveCount(1);
-  await expect(card.getByLabel("Norme constructeur")).toHaveValue("5W30 C3");
+  const dialog = page.getByRole("dialog");
+  await page.getByRole("button", { name: "Ajouter un fluide" }).click();
+  await dialog.getByLabel("Quantité (L)").fill("4,5");
+  await dialog.getByLabel("Norme constructeur").fill("5W30 C3");
+  await dialog.getByRole("button", { name: "Ajouter", exact: true }).click();
+  const row = page.getByTestId(/^fluid-/);
+  await expect(row).toHaveCount(1);
+  await expect(row).toContainText("5W30 C3");
+  await expect(dialog).toHaveCount(0);
 
-  await card.getByLabel("Norme constructeur").fill("0W20");
-  await card.getByRole("button", { name: "Enregistrer" }).click();
+  await row.getByRole("button", { name: "Modifier" }).click();
+  await dialog.getByLabel("Norme constructeur").fill("0W20");
+  await dialog.getByRole("button", { name: "Enregistrer" }).click();
+  await expect(dialog).toHaveCount(0);
   await page.reload();
-  await expect(
-    page.getByTestId(/^fluid-/).getByLabel("Norme constructeur"),
-  ).toHaveValue("0W20");
+  await expect(page.getByTestId(/^fluid-/)).toContainText("0W20");
 
   await page
     .getByTestId(/^fluid-/)
-    .getByRole("button", { name: "Supprimer" })
+    .getByRole("button", { name: "Modifier" })
     .click();
+  await dialog.getByRole("button", { name: "Supprimer" }).click();
   await expect(page.getByTestId(/^fluid-/)).toHaveCount(0);
 });
 
@@ -90,24 +93,28 @@ test("parts: add with link, delete", async ({ page, signedIn }) => {
   const { base } = await createVehicle(page);
   await page.goto(`${base}/parts`);
 
-  const add = page.locator("section").filter({ hasText: "Ajouter une pièce" });
-  await add.getByLabel("Type de pièce").fill("Filtre à huile");
-  await add.getByLabel("Marque").fill("Mann");
-  await add.getByLabel("Référence").fill("W712/95");
-  await add.getByRole("button", { name: "Ajouter" }).click();
-  const card = page.getByTestId(/^part-/);
-  await expect(card).toHaveCount(1);
+  const dialog = page.getByRole("dialog");
+  await page.getByRole("button", { name: "Ajouter une pièce" }).click();
+  await dialog.getByLabel("Type de pièce").fill("Filtre à huile");
+  await dialog.getByLabel("Marque").fill("Mann");
+  await dialog.getByLabel("Référence").fill("W712/95");
+  await dialog.getByRole("button", { name: "Ajouter", exact: true }).click();
+  const row = page.getByTestId(/^part-/);
+  await expect(row).toHaveCount(1);
+  await expect(dialog).toHaveCount(0);
 
-  await card
+  await row.getByRole("button", { name: "Ajouter un lien" }).click();
+  await dialog
     .getByLabel("Lien fournisseur (http/https)")
     .fill("https://example.com/filtre");
-  await card.getByLabel("Libellé (facultatif)").first().fill("Fournisseur");
-  await card.getByRole("button", { name: "Ajouter le lien" }).click();
-  const link = card.getByRole("link", { name: "Fournisseur" });
+  await dialog.getByLabel("Libellé (facultatif)").fill("Fournisseur");
+  await dialog.getByRole("button", { name: "Ajouter le lien" }).click();
+  const link = row.getByRole("link", { name: "Fournisseur" });
   await expect(link).toHaveAttribute("href", "https://example.com/filtre");
   await expect(link).toHaveAttribute("target", "_blank");
 
-  await card.getByRole("button", { name: "Supprimer la pièce" }).click();
+  await row.getByRole("button", { name: "Modifier" }).click();
+  await dialog.getByRole("button", { name: "Supprimer la pièce" }).click();
   await expect(page.getByTestId(/^part-/)).toHaveCount(0);
 });
 
@@ -126,11 +133,14 @@ test("archive hides forms, unarchive restores them", async ({
   );
   await expect(page.getByText("Vendu")).toBeVisible();
 
+  for (const tab of ["plan", "fluids", "parts"]) {
+    await page.goto(`${base}/${tab}`);
+    await expect(page.getByRole("button", { name: "Modifier" })).toHaveCount(0);
+  }
   await page.goto(`${base}/plan`);
-  await expect(page.getByRole("button", { name: "Enregistrer" })).toHaveCount(
-    0,
-  );
-  await expect(page.getByRole("button", { name: "Ajouter" })).toHaveCount(0);
+  await expect(
+    page.getByRole("button", { name: "Ajouter une ligne" }),
+  ).toHaveCount(0);
 
   await page.goto("/vehicles/archived");
   await expect(

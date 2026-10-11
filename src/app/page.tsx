@@ -1,7 +1,6 @@
 import { Suspense } from "react";
 import Link from "next/link";
 import { buttonVariants } from "@/components/ui/button";
-import { MaintenanceRow } from "@/components/maintenance-row";
 import { StatusChip } from "@/components/status-chip";
 import { VehicleCard } from "@/components/vehicle-card";
 import { Km } from "@/components/km";
@@ -54,7 +53,7 @@ async function Home() {
         </p>
       </div>
       <h2 className="text-heading">Mes véhicules</h2>
-      <ul className="flex flex-col gap-3">
+      <ul className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
         {cards.length === 0 && <li>Aucun véhicule.</li>}
         {cards.map(({ vehicle, current, dues, replacements }) => {
           const { late, upcoming } = countAlerts(dues);
@@ -111,37 +110,67 @@ async function Home() {
       {rows.length > 0 && (
         <>
           <h2 className="text-heading">Échéances</h2>
-          <ul className="flex flex-col gap-3" data-testid="dues">
-            {rows.map((row) => (
-              <li key={`${row.vehicle.id}-${row.operationTypeId}`}>
-                <MaintenanceRow
-                  name={row.name}
-                  status={row.status}
-                  aside={
-                    row.effectiveDate
-                      ? formatDate(row.effectiveDate)
-                      : undefined
-                  }
-                >
-                  <Link href={`/vehicles/${row.vehicle.id}`}>
+          <table className="text-body-sm w-full" data-testid="dues">
+            <caption className="sr-only">Échéances</caption>
+            <thead>
+              <tr className="border-b border-line text-left text-ink-muted">
+                <th scope="col" className="py-2 pr-3 max-sm:hidden">
+                  Véhicule
+                </th>
+                <th scope="col" className="py-2 pr-3 font-semibold">
+                  Opération
+                </th>
+                <th scope="col" className="py-2 pr-3">
+                  Statut
+                </th>
+                <th scope="col" className="num py-2 text-right">
+                  Date
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {rows.map((row) => {
+                const vehicle = (
+                  <Link
+                    href={`/vehicles/${row.vehicle.id}`}
+                    className="inline-flex min-h-11 items-center underline"
+                  >
                     {row.vehicle.plate} · {row.vehicle.make} {row.vehicle.model}
                   </Link>
-                  {row.dueKm !== null && (
-                    <p className="tabular-nums">
-                      <Km
-                        displayedKm={displayedKmOf(
-                          now,
-                          row.dueKm,
-                          row.replacements,
-                        )}
-                        realKm={row.dueKm}
-                      />
-                    </p>
-                  )}
-                </MaintenanceRow>
-              </li>
-            ))}
-          </ul>
+                );
+                return (
+                  <tr
+                    key={`${row.vehicle.id}-${row.operationTypeId}`}
+                    className="border-b border-line"
+                  >
+                    <td className="py-2 pr-3 max-sm:hidden">{vehicle}</td>
+                    <td className="py-2 pr-3">
+                      <p className="font-medium">{row.name}</p>
+                      <div className="sm:hidden">{vehicle}</div>
+                    </td>
+                    <td className="py-2 pr-3">
+                      <StatusChip status={row.status} />
+                    </td>
+                    <td className="num py-2 text-right tabular-nums">
+                      {row.effectiveDate ? formatDate(row.effectiveDate) : "—"}
+                      {row.dueKm !== null && (
+                        <p className="text-ink-muted">
+                          <Km
+                            displayedKm={displayedKmOf(
+                              now,
+                              row.dueKm,
+                              row.replacements,
+                            )}
+                            realKm={row.dueKm}
+                          />
+                        </p>
+                      )}
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
         </>
       )}
       <div className="flex flex-wrap gap-2">

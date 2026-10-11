@@ -146,6 +146,7 @@ export function InterventionForm({
     <ActionForm
       action={editing ? updateInterventionAction : createInterventionAction}
       submitLabel={editing ? "Enregistrer" : "Enregistrer l'intervention"}
+      className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 [&>.sticky]:col-span-full [&>[role=alert]]:col-span-full"
       total={
         <p
           className="text-heading font-heading whitespace-nowrap tabular-nums"
@@ -202,7 +203,7 @@ export function InterventionForm({
           ))}
         </datalist>
       </div>
-      <div className="flex flex-col gap-1.5">
+      <div className="flex flex-col gap-1.5 sm:col-span-full">
         <Label htmlFor="notes">Notes (facultatif)</Label>
         <Input
           id="notes"
@@ -212,7 +213,7 @@ export function InterventionForm({
         />
       </div>
 
-      <section className="flex flex-col gap-3">
+      <section className="col-span-full flex flex-col gap-3">
         <h2 className="text-heading">Opérations</h2>
         {values.ops.map((op, i) => (
           <Card key={op.key} data-testid={`op-${i}`} size="sm">
@@ -246,10 +247,16 @@ export function InterventionForm({
               {op.lines.map((line, j) => (
                 <fieldset
                   key={line.key}
-                  className="flex flex-col gap-3 rounded-md bg-surface-300 p-4"
+                  className={`grid gap-3 rounded-md bg-surface-300 p-4 sm:items-end ${
+                    line.partId === ""
+                      ? "sm:grid-cols-[2fr_2fr_1fr_1fr_auto]"
+                      : "sm:grid-cols-[2fr_1fr_1fr_auto]"
+                  }`}
                   data-testid={`op-${i}-line-${j}`}
                 >
-                  <legend className="text-label px-1">Pièce {j + 1}</legend>
+                  <legend className="text-label px-1 sm:col-span-full">
+                    Pièce {j + 1}
+                  </legend>
                   <div className="flex flex-col gap-1.5">
                     <Label htmlFor={`op-${i}-line-${j}-part`}>
                       Pièce de la banque
@@ -284,7 +291,7 @@ export function InterventionForm({
                       />
                     </div>
                   )}
-                  <div className="grid grid-cols-2 gap-2">
+                  <div className="grid grid-cols-2 gap-2 sm:contents">
                     <div className="flex flex-col gap-1.5">
                       <Label htmlFor={`op-${i}-line-${j}-qty`}>Quantité</Label>
                       <Input
@@ -361,7 +368,11 @@ export function InterventionForm({
         />
       </div>
 
-      {!editing && <InvoiceInput />}
+      {!editing && (
+        <div className="col-span-full">
+          <InvoiceInput />
+        </div>
+      )}
     </ActionForm>
   );
 }

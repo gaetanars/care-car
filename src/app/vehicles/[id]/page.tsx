@@ -23,8 +23,8 @@ async function Summary({ params }: { params: Promise<{ id: string }> }) {
   );
   const archived = vehicle.archivedAt !== null;
   return (
-    <>
-      <section className="flex flex-col gap-1 rounded-lg bg-surface-200 p-6 shadow-soft">
+    <div className="grid gap-5 lg:grid-cols-[2fr_1fr] lg:grid-rows-[auto_auto_auto_1fr] lg:items-start">
+      <section className="flex flex-col gap-1 rounded-lg bg-surface-200 p-6 shadow-soft lg:col-start-2 lg:row-start-1">
         <p className="text-label text-ink-muted">Kilométrage actuel</p>
         <p
           data-testid="current-km"
@@ -52,11 +52,11 @@ async function Summary({ params }: { params: Promise<{ id: string }> }) {
         </p>
       </section>
       {archived ? (
-        <p className="text-body-sm text-ink-muted">
+        <p className="text-body-sm text-ink-muted lg:col-start-1 lg:row-start-1">
           Archivé : pas d&apos;échéances.
         </p>
       ) : (
-        <ul className="flex flex-col gap-3">
+        <ul className="flex flex-col gap-3 lg:col-start-1 lg:row-span-4 lg:row-start-1">
           {dues.map((due) => (
             <li
               key={due.operationTypeId}
@@ -109,23 +109,25 @@ async function Summary({ params }: { params: Promise<{ id: string }> }) {
           ))}
         </ul>
       )}
-      <VehicleIdentity vehicle={vehicle} />
-      <Link
-        href={`/vehicles/${vehicle.id}/edit`}
-        className={buttonVariants({ variant: "outline" }) + " self-start"}
-      >
-        Modifier
-      </Link>
-      <a
-        href={`/vehicles/${vehicle.id}/export`}
-        download
-        className={
-          buttonVariants({ variant: "outline" }) + " min-h-11 self-start"
-        }
-      >
-        Exporter le carnet (PDF)
-      </a>
-    </>
+      <div className="lg:col-start-2">
+        <VehicleIdentity vehicle={vehicle} />
+      </div>
+      <div className="flex flex-wrap gap-3 lg:col-start-2">
+        <Link
+          href={`/vehicles/${vehicle.id}/edit`}
+          className={buttonVariants({ variant: "outline" })}
+        >
+          Modifier
+        </Link>
+        <a
+          href={`/vehicles/${vehicle.id}/export`}
+          download
+          className={buttonVariants({ variant: "outline" }) + " min-h-11"}
+        >
+          Exporter le carnet (PDF)
+        </a>
+      </div>
+    </div>
   );
 }
 

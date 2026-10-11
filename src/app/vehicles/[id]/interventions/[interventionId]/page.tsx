@@ -36,130 +36,134 @@ async function Detail({ params }: { params: Params }) {
     })),
   });
   return (
-    <>
-      <div>
-        <h2 className="text-title">{formatDate(i.date)}</h2>
-        <p className="text-body-sm text-ink-muted tabular-nums">
-          <Km
-            displayedKm={i.displayedKm}
-            realKm={realKm(i.date, i.displayedKm, replacements)}
-          />{" "}
-          · {i.provider}
+    <div className="grid gap-5 lg:grid-cols-2 lg:items-start">
+      <div className="flex flex-col gap-5">
+        <div>
+          <h2 className="text-title">{formatDate(i.date)}</h2>
+          <p className="text-body-sm text-ink-muted tabular-nums">
+            <Km
+              displayedKm={i.displayedKm}
+              realKm={realKm(i.date, i.displayedKm, replacements)}
+            />{" "}
+            · {i.provider}
+          </p>
+          {i.notes && <p className="text-body-sm text-ink-muted">{i.notes}</p>}
+        </div>
+
+        <p className="flex justify-between text-body-sm tabular-nums">
+          <span>Main-d&apos;œuvre</span>
+          <span>{formatCents(i.laborCostCents)}</span>
         </p>
-        {i.notes && <p className="text-body-sm text-ink-muted">{i.notes}</p>}
+        <p className="text-figure flex items-baseline justify-between font-heading tabular-nums">
+          <span>Total</span>
+          <span data-testid="detail-total">{formatCents(total)}</span>
+        </p>
+        <p className="text-caption text-ink-muted">
+          La main-d&apos;œuvre n&apos;est pas ventilée entre les opérations : le
+          coût par opération ne porte que sur les pièces.
+        </p>
       </div>
 
-      <ul className="flex flex-col gap-3">
-        {i.ops.map((op) => (
-          <li key={op.id}>
-            <Card>
-              <CardContent className="flex flex-col gap-1">
-                <h3 className="text-heading">{op.name}</h3>
-                {op.detail && <p className="text-sm">{op.detail}</p>}
-                <ul className="text-body-sm tabular-nums">
-                  {op.lines.map((l) => (
-                    <li key={l.id} className="flex justify-between gap-2">
-                      <span>
-                        {l.quantity} × {l.partName ?? l.label}
-                      </span>
-                      <span>{formatCents(l.amountCents)}</span>
-                    </li>
-                  ))}
-                </ul>
-              </CardContent>
-            </Card>
-          </li>
-        ))}
-      </ul>
-
-      <p className="flex justify-between text-body-sm tabular-nums">
-        <span>Main-d&apos;œuvre</span>
-        <span>{formatCents(i.laborCostCents)}</span>
-      </p>
-      <p className="text-figure flex items-baseline justify-between font-heading tabular-nums">
-        <span>Total</span>
-        <span data-testid="detail-total">{formatCents(total)}</span>
-      </p>
-      <p className="text-caption text-ink-muted">
-        La main-d&apos;œuvre n&apos;est pas ventilée entre les opérations : le
-        coût par opération ne porte que sur les pièces.
-      </p>
-
-      <section className="flex flex-col gap-3 border-t border-line pt-5">
-        <h2 className="text-heading">Factures</h2>
-        <ul className="flex flex-col gap-2">
-          {i.invoices.length === 0 && (
-            <li className="text-body-sm text-ink-muted">Aucune facture.</li>
-          )}
-          {i.invoices.map((f) => (
-            <li
-              key={f.id}
-              className="text-body-sm flex flex-wrap items-center gap-3 rounded-md bg-surface-300 px-4 py-3"
-              data-testid={`invoice-${f.id}`}
-            >
-              <span className="break-all">
-                {f.originalName} ({size.format(f.sizeBytes / 1024)} Ko)
-              </span>
-              <a
-                href={`/invoices/${f.id}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="font-semibold text-brand underline"
-              >
-                Consulter
-              </a>
-              <a
-                href={`/invoices/${f.id}?download=1`}
-                className="font-semibold text-brand underline"
-              >
-                Télécharger
-              </a>
-              {!archived && (
-                <form action={deleteInvoiceAction}>
-                  <input type="hidden" name="vehicleId" value={vehicle.id} />
-                  <input type="hidden" name="invoiceId" value={f.id} />
-                  <Button
-                    type="submit"
-                    variant="ghost"
-                    size="xs"
-                    aria-label={`Retirer la facture ${f.originalName}`}
-                  >
-                    Retirer
-                  </Button>
-                </form>
-              )}
+      <div className="flex flex-col gap-5">
+        <ul className="flex flex-col gap-3">
+          {i.ops.map((op) => (
+            <li key={op.id}>
+              <Card>
+                <CardContent className="flex flex-col gap-1">
+                  <h3 className="text-heading">{op.name}</h3>
+                  {op.detail && <p className="text-sm">{op.detail}</p>}
+                  <ul className="text-body-sm tabular-nums">
+                    {op.lines.map((l) => (
+                      <li key={l.id} className="flex justify-between gap-2">
+                        <span>
+                          {l.quantity} × {l.partName ?? l.label}
+                        </span>
+                        <span>{formatCents(l.amountCents)}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </CardContent>
+              </Card>
             </li>
           ))}
         </ul>
-        {!archived && (
-          <ActionForm
-            action={addInvoicesAction}
-            submitLabel="Ajouter les factures"
-            variant="secondary"
-          >
-            <input type="hidden" name="interventionId" value={i.id} />
-            <InvoiceInput label="Ajouter des factures (PDF)" />
-          </ActionForm>
-        )}
-      </section>
 
-      {!archived && (
-        <div className="flex gap-3">
-          <Link
-            href={`${base}/edit`}
-            className={buttonVariants({ variant: "outline" })}
-          >
-            Modifier
-          </Link>
-          <Link
-            href={`${base}/delete`}
-            className={buttonVariants({ variant: "destructive" })}
-          >
-            Supprimer
-          </Link>
-        </div>
-      )}
-    </>
+        <section className="flex flex-col gap-3 border-t border-line pt-5">
+          <h2 className="text-heading">Factures</h2>
+          <ul className="flex flex-col gap-2">
+            {i.invoices.length === 0 && (
+              <li className="text-body-sm text-ink-muted">Aucune facture.</li>
+            )}
+            {i.invoices.map((f) => (
+              <li
+                key={f.id}
+                className="text-body-sm flex flex-wrap items-center gap-3 rounded-md bg-surface-300 px-4 py-3"
+                data-testid={`invoice-${f.id}`}
+              >
+                <span className="break-all">
+                  {f.originalName} ({size.format(f.sizeBytes / 1024)} Ko)
+                </span>
+                <a
+                  href={`/invoices/${f.id}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="font-semibold text-brand underline"
+                >
+                  Consulter
+                </a>
+                <a
+                  href={`/invoices/${f.id}?download=1`}
+                  className="font-semibold text-brand underline"
+                >
+                  Télécharger
+                </a>
+                {!archived && (
+                  <form action={deleteInvoiceAction}>
+                    <input type="hidden" name="vehicleId" value={vehicle.id} />
+                    <input type="hidden" name="invoiceId" value={f.id} />
+                    <Button
+                      type="submit"
+                      variant="ghost"
+                      size="xs"
+                      aria-label={`Retirer la facture ${f.originalName}`}
+                    >
+                      Retirer
+                    </Button>
+                  </form>
+                )}
+              </li>
+            ))}
+          </ul>
+          {!archived && (
+            <ActionForm
+              action={addInvoicesAction}
+              submitLabel="Ajouter les factures"
+              variant="secondary"
+            >
+              <input type="hidden" name="interventionId" value={i.id} />
+              <InvoiceInput label="Ajouter des factures (PDF)" />
+            </ActionForm>
+          )}
+        </section>
+
+        {!archived && (
+          <div className="flex gap-3">
+            <Link
+              href={`${base}/edit`}
+              className={buttonVariants({ variant: "outline" })}
+            >
+              Modifier
+            </Link>
+            <Link
+              href={`${base}/delete`}
+              className={buttonVariants({ variant: "destructive" })}
+            >
+              Supprimer
+            </Link>
+          </div>
+        )}
+      </div>
+    </div>
   );
 }
 

@@ -56,9 +56,8 @@ test("readings: add, inconsistent km needs confirmation, counter change, delete"
   await add.getByRole("button", { name: "Ajouter le relevé" }).click();
   await expect(page.getByTestId(/^reading-/)).toHaveCount(2);
 
-  const change = page
-    .locator("section")
-    .filter({ hasText: "Changements de compteur" });
+  await page.getByRole("button", { name: "Ajouter un changement" }).click();
+  const change = page.getByRole("dialog");
   await change.getByLabel("Date du changement").fill("2026-03-01");
   await change.getByLabel("Km de l'ancien compteur").fill("120000");
   await change.getByLabel("Km du nouveau compteur").fill("100");
@@ -86,13 +85,12 @@ test("intervention: create, invoice, edit, delete removes files", async ({
   const { base, vehicleId } = await createVehicle(page);
 
   await open(page, `${base}/parts`);
-  const addPart = page
-    .locator("section")
-    .filter({ hasText: "Ajouter une pièce" });
+  await page.getByRole("button", { name: "Ajouter une pièce" }).click();
+  const addPart = page.getByRole("dialog");
   await addPart.getByLabel("Type de pièce").fill("Filtre à huile");
   await addPart.getByLabel("Marque").fill("Mann");
   await addPart.getByLabel("Référence").fill("W712/95");
-  await addPart.getByRole("button", { name: "Ajouter" }).click();
+  await addPart.getByRole("button", { name: "Ajouter", exact: true }).click();
   await expect(page.getByTestId(/^part-/)).toHaveCount(1);
 
   await open(page, `${base}/interventions/new`);

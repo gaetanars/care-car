@@ -1,6 +1,5 @@
 import { Suspense } from "react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { requireAdmin } from "@/server/auth/session";
@@ -15,7 +14,10 @@ async function AllowList() {
   const users = listUsers();
   return (
     <>
-      <form action={allow} className="flex flex-col gap-3">
+      <form
+        action={allow}
+        className="grid gap-3 sm:grid-cols-[2fr_1fr_auto] sm:items-end"
+      >
         <div className="flex flex-col gap-1.5">
           <Label htmlFor="email">Adresse e-mail</Label>
           <Input id="email" name="email" type="email" required />
@@ -34,19 +36,39 @@ async function AllowList() {
         </div>
         <Button type="submit">Ajouter</Button>
       </form>
-      <ul className="flex flex-col gap-3">
-        {users.map((u) => (
-          <li key={u.id}>
-            <Card data-testid={`user-${u.email}`}>
-              <CardContent className="flex flex-col gap-2">
+      <table className="text-body-sm w-full">
+        <caption className="sr-only">Liste blanche</caption>
+        <thead>
+          <tr className="border-b border-line text-left text-ink-muted">
+            <th scope="col" className="py-2 pr-3 font-semibold">
+              Utilisateur
+            </th>
+            <th scope="col" className="py-2 pr-3">
+              Rôle et statut
+            </th>
+            <th scope="col" className="py-2 text-right">
+              <span className="sr-only">Actions</span>
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          {users.map((u) => (
+            <tr
+              key={u.id}
+              data-testid={`user-${u.email}`}
+              className="border-b border-line align-top"
+            >
+              <td className="py-2 pr-3">
                 <p className="font-medium break-all">{u.email}</p>
-                <p className="text-ink-muted text-sm">{u.name}</p>
-                <p className="text-sm">
-                  {u.role === "admin" ? "Administrateur" : "Utilisateur"} ·{" "}
-                  {u.allowed ? "Autorisé" : "Retiré"}
-                </p>
+                <p className="text-ink-muted">{u.name}</p>
+              </td>
+              <td className="py-2 pr-3">
+                {u.role === "admin" ? "Administrateur" : "Utilisateur"} ·{" "}
+                {u.allowed ? "Autorisé" : "Retiré"}
+              </td>
+              <td className="py-2">
                 {u.id !== me.id && (
-                  <div className="flex flex-wrap gap-2">
+                  <div className="flex flex-wrap justify-end gap-2">
                     <form action={changeRole}>
                       <input type="hidden" name="userId" value={u.id} />
                       <input
@@ -78,11 +100,11 @@ async function AllowList() {
                     )}
                   </div>
                 )}
-              </CardContent>
-            </Card>
-          </li>
-        ))}
-      </ul>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
     </>
   );
 }

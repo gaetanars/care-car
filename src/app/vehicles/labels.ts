@@ -36,3 +36,7 @@ export const CATEGORY_LABELS: Record<(typeof CATEGORIES)[number], string> = {
   reparation: "Réparation",
   reglementaire: "Réglementaire",
 };
+
+/** Vehicle form layout: fields in a grid, submit/alerts across the full width. */
+export const VEHICLE_GRID =
+  "grid gap-4 sm:grid-cols-2 lg:grid-cols-3 [&>[role=alert]]:col-span-full [&>button]:col-span-full";
