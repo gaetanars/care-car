@@ -28,7 +28,7 @@ export const BASELINE_LABELS: Record<(typeof BASELINES)[number], string> = {
 };
 
 export const selectClass =
-  "h-9 w-full rounded-md border border-input bg-transparent px-3 text-sm";
+  "h-12 w-full rounded-sm border-[1.5px] border-input bg-card px-3.5 text-base text-foreground";
 
 export const CATEGORIES = ["entretien", "reparation", "reglementaire"] as const;
 export const CATEGORY_LABELS: Record<(typeof CATEGORIES)[number], string> = {

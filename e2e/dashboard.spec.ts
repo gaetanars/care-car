@@ -1,7 +1,7 @@
 import { randomUUID } from "node:crypto";
 import { expect, test } from "./fixtures";
 
-test("dashboard and summary show the late CT, + Relevé updates the km", async ({
+test("dashboard and summary show the late CT, Saisir un relevé updates the km", async ({
   page,
   signedIn,
 }) => {
@@ -30,7 +30,7 @@ test("dashboard and summary show the late CT, + Relevé updates the km", async (
     page.getByTestId("dues").getByText("Contrôle technique").first(),
   ).toBeVisible();
 
-  await card.getByRole("link", { name: "+ Relevé" }).click();
+  await card.getByRole("link", { name: "Saisir un relevé" }).click();
   await expect(page).toHaveURL(`${base}/readings`);
   await page.waitForLoadState("networkidle");
   await page.getByLabel("Kilométrage affiché").fill("42000");

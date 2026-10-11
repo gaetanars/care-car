@@ -16,7 +16,7 @@ async function DeleteIntervention({ params }: { params: Params }) {
   if (vehicle.archivedAt) notFound();
   return (
     <>
-      <h2 className="font-medium">Supprimer l&apos;intervention</h2>
+      <h2 className="text-heading">Supprimer l&apos;intervention</h2>
       <p className="text-sm">
         Cette action est définitive : l&apos;intervention du{" "}
         {formatDate(intervention.date)}, ses opérations, ses lignes de pièces et

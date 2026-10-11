@@ -6,8 +6,8 @@ import { ENERGIES, ENERGY_LABELS } from "../labels";
 
 export default function NewVehiclePage() {
   return (
-    <main className="mx-auto flex w-full max-w-xl flex-col gap-4 p-4">
-      <h1 className="text-xl font-semibold">Ajouter un véhicule</h1>
+    <main className="mx-auto flex w-full max-w-2xl flex-col gap-5 px-4 py-6">
+      <h1 className="text-title">Ajouter un véhicule</h1>
       <ActionForm action={createVehicleAction} submitLabel="Créer le véhicule">
         <Field label="Immatriculation" name="plate" required maxLength={20} />
         <Field label="Marque" name="make" required maxLength={200} />

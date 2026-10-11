@@ -28,7 +28,7 @@ async function Identity({ params }: { params: Promise<{ id: string }> }) {
         </form>
         <Link
           href={`/vehicles/${vehicle.id}/delete`}
-          className="text-destructive underline"
+          className="text-late-ink underline"
         >
           Supprimer le véhicule
         </Link>
@@ -78,12 +78,12 @@ async function Identity({ params }: { params: Promise<{ id: string }> }) {
           maxLength={17}
         />
       </ActionForm>
-      <section className="flex flex-col gap-2 border-t pt-4">
-        <h2 className="font-medium">Archiver</h2>
+      <section className="flex flex-col gap-3 border-t border-line pt-5">
+        <h2 className="text-heading">Archiver</h2>
         <ActionForm
           action={archiveVehicleAction}
           submitLabel="Archiver"
-          variant="outline"
+          variant="secondary"
         >
           {hidden}
           <Field
@@ -96,7 +96,7 @@ async function Identity({ params }: { params: Promise<{ id: string }> }) {
       </section>
       <Link
         href={`/vehicles/${vehicle.id}/delete`}
-        className="text-destructive underline"
+        className="text-late-ink underline"
       >
         Supprimer le véhicule
       </Link>

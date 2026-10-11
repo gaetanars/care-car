@@ -29,9 +29,7 @@ async function Parts({ params }: { params: Promise<{ id: string }> }) {
                 <p className="text-sm">
                   {p.brand} · {p.reference}
                 </p>
-                {p.notes && (
-                  <p className="text-muted-foreground text-sm">{p.notes}</p>
-                )}
+                {p.notes && <p className="text-ink-muted text-sm">{p.notes}</p>}
                 <ul className="flex flex-col gap-1">
                   {p.urls.map((u) => (
                     <li key={u.id} className="flex items-center gap-2 text-sm">
@@ -69,7 +67,7 @@ async function Parts({ params }: { params: Promise<{ id: string }> }) {
                     <ActionForm
                       action={addPartUrlAction}
                       submitLabel="Ajouter le lien"
-                      variant="outline"
+                      variant="secondary"
                       size="sm"
                     >
                       <input
@@ -95,7 +93,7 @@ async function Parts({ params }: { params: Promise<{ id: string }> }) {
                     <ActionForm
                       action={updatePartAction}
                       submitLabel="Enregistrer"
-                      variant="outline"
+                      variant="secondary"
                       size="sm"
                     >
                       <input
@@ -157,8 +155,8 @@ async function Parts({ params }: { params: Promise<{ id: string }> }) {
         ))}
       </ul>
       {!archived && (
-        <section className="flex flex-col gap-2 border-t pt-4">
-          <h2 className="font-medium">Ajouter une pièce</h2>
+        <section className="flex flex-col gap-3 border-t border-line pt-5">
+          <h2 className="text-heading">Ajouter une pièce</h2>
           <ActionForm action={createPartAction} submitLabel="Ajouter">
             <input type="hidden" name="vehicleId" value={vehicle.id} />
             <Field

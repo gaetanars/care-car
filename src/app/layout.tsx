@@ -1,29 +1,33 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Suspense } from "react";
+import { Bricolage_Grotesque, Figtree } from "next/font/google";
+import { AppNav } from "@/components/app-nav";
 import "./globals.css";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const display = Bricolage_Grotesque({
+  variable: "--font-display",
   subsets: ["latin"],
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const text = Figtree({
+  variable: "--font-text",
   subsets: ["latin"],
 });
 
 export const metadata: Metadata = {
-  title: "care-car",
+  title: "CareCar",
   description: "Carnet d'entretien véhicules",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html
-      lang="fr"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
-    >
-      <body className="min-h-full flex flex-col">{children}</body>
+    <html lang="fr" className={`${display.variable} ${text.variable} h-full`}>
+      <body className="min-h-full">
+        <Suspense fallback={null}>
+          <AppNav />
+        </Suspense>
+        {children}
+      </body>
     </html>
   );
 }

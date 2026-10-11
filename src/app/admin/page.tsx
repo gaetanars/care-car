@@ -40,7 +40,7 @@ async function AllowList() {
             <Card data-testid={`user-${u.email}`}>
               <CardContent className="flex flex-col gap-2">
                 <p className="font-medium break-all">{u.email}</p>
-                <p className="text-muted-foreground text-sm">{u.name}</p>
+                <p className="text-ink-muted text-sm">{u.name}</p>
                 <p className="text-sm">
                   {u.role === "admin" ? "Administrateur" : "Utilisateur"} ·{" "}
                   {u.allowed ? "Autorisé" : "Retiré"}
@@ -54,7 +54,7 @@ async function AllowList() {
                         name="role"
                         value={u.role === "admin" ? "user" : "admin"}
                       />
-                      <Button type="submit" variant="outline" size="sm">
+                      <Button type="submit" variant="secondary" size="sm">
                         {u.role === "admin"
                           ? "Passer utilisateur"
                           : "Passer administrateur"}

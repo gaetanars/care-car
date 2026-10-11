@@ -8,24 +8,24 @@ export const formatDate = (iso: string) =>
 /** Read-only identity; archive date and reason only when archived. */
 export function VehicleIdentity({ vehicle }: { vehicle: Vehicle }) {
   return (
-    <dl className="grid grid-cols-[auto_1fr] gap-x-4 gap-y-1 text-sm">
-      <dt className="text-muted-foreground">Immatriculation</dt>
+    <dl className="text-body-sm grid grid-cols-[auto_1fr] gap-x-4 gap-y-1.5 rounded-lg bg-surface-200 p-6 shadow-soft">
+      <dt className="text-ink-muted">Immatriculation</dt>
       <dd>{vehicle.plate}</dd>
-      <dt className="text-muted-foreground">Marque</dt>
+      <dt className="text-ink-muted">Marque</dt>
       <dd>{vehicle.make}</dd>
-      <dt className="text-muted-foreground">Modèle</dt>
+      <dt className="text-ink-muted">Modèle</dt>
       <dd>{vehicle.model}</dd>
-      <dt className="text-muted-foreground">Énergie</dt>
+      <dt className="text-ink-muted">Énergie</dt>
       <dd>{ENERGY_LABELS[vehicle.energy]}</dd>
-      <dt className="text-muted-foreground">1re immatriculation</dt>
+      <dt className="text-ink-muted">1re immatriculation</dt>
       <dd>{formatDate(vehicle.firstRegistrationDate)}</dd>
-      <dt className="text-muted-foreground">VIN</dt>
+      <dt className="text-ink-muted">VIN</dt>
       <dd>{vehicle.vin ?? "—"}</dd>
       {vehicle.archivedAt && (
         <>
-          <dt className="text-muted-foreground">Archivé le</dt>
+          <dt className="text-ink-muted">Archivé le</dt>
           <dd>{formatDate(vehicle.archivedAt)}</dd>
-          <dt className="text-muted-foreground">Motif</dt>
+          <dt className="text-ink-muted">Motif</dt>
           <dd>{vehicle.archiveReason ?? "—"}</dd>
         </>
       )}

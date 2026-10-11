@@ -1,5 +1,6 @@
 import { Suspense } from "react";
 import Link from "next/link";
+import { VehicleAvatar } from "@/components/vehicle-card";
 import { requireUser } from "@/server/auth/session";
 import { listVehicles } from "@/server/data/vehicles";
 
@@ -8,11 +9,23 @@ async function Archived() {
   const vehicles = listVehicles(user.id, { archived: true });
   if (vehicles.length === 0) return <p>Aucun véhicule archivé.</p>;
   return (
-    <ul className="flex flex-col gap-2">
+    <ul className="flex flex-col gap-3">
       {vehicles.map((v) => (
         <li key={v.id}>
-          <Link href={`/vehicles/${v.id}`} className="underline">
-            {v.plate} · {v.make} {v.model}
+          <Link
+            href={`/vehicles/${v.id}`}
+            className="flex items-center gap-4 rounded-md bg-surface-200 p-4 shadow-soft"
+          >
+            <VehicleAvatar
+              vehicleId={v.id}
+              electric={v.energy === "electrique"}
+            />
+            <span className="text-heading min-w-0 flex-1">
+              {v.plate} · {v.make} {v.model}
+            </span>
+            <span className="text-label rounded-full bg-surface-300 px-3 py-1">
+              Archivé
+            </span>
           </Link>
         </li>
       ))}
@@ -22,8 +35,8 @@ async function Archived() {
 
 export default function ArchivedPage() {
   return (
-    <main className="mx-auto flex w-full max-w-xl flex-col gap-4 p-4">
-      <h1 className="text-xl font-semibold">Véhicules archivés</h1>
+    <main className="mx-auto flex w-full max-w-2xl flex-col gap-5 px-4 py-6">
+      <h1 className="text-title">Véhicules archivés</h1>
       <Suspense fallback={<p>Chargement…</p>}>
         <Archived />
       </Suspense>

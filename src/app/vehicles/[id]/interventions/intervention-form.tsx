@@ -146,6 +146,14 @@ export function InterventionForm({
     <ActionForm
       action={editing ? updateInterventionAction : createInterventionAction}
       submitLabel={editing ? "Enregistrer" : "Enregistrer l'intervention"}
+      total={
+        <p
+          className="text-heading font-heading whitespace-nowrap tabular-nums"
+          data-testid="live-total"
+        >
+          Total : {formatCents(total)}
+        </p>
+      }
     >
       <input type="hidden" name="vehicleId" value={vehicleId} />
       {editing && (
@@ -205,9 +213,9 @@ export function InterventionForm({
       </div>
 
       <section className="flex flex-col gap-3">
-        <h2 className="font-medium">Opérations</h2>
+        <h2 className="text-heading">Opérations</h2>
         {values.ops.map((op, i) => (
-          <Card key={op.key} data-testid={`op-${i}`}>
+          <Card key={op.key} data-testid={`op-${i}`} size="sm">
             <CardContent className="flex flex-col gap-3">
               <div className="flex flex-col gap-1.5">
                 <Label htmlFor={`op-${i}-type`}>Type d&apos;opération</Label>
@@ -238,10 +246,10 @@ export function InterventionForm({
               {op.lines.map((line, j) => (
                 <fieldset
                   key={line.key}
-                  className="flex flex-col gap-2 rounded-md border p-2"
+                  className="flex flex-col gap-3 rounded-md bg-surface-300 p-4"
                   data-testid={`op-${i}-line-${j}`}
                 >
-                  <legend className="px-1 text-sm">Pièce {j + 1}</legend>
+                  <legend className="text-label px-1">Pièce {j + 1}</legend>
                   <div className="flex flex-col gap-1.5">
                     <Label htmlFor={`op-${i}-line-${j}-part`}>
                       Pièce de la banque
@@ -317,7 +325,7 @@ export function InterventionForm({
               ))}
               <Button
                 type="button"
-                variant="outline"
+                variant="secondary"
                 size="sm"
                 onClick={() => addLine(i)}
               >
@@ -336,7 +344,7 @@ export function InterventionForm({
             </CardContent>
           </Card>
         ))}
-        <Button type="button" variant="outline" onClick={addOp}>
+        <Button type="button" variant="secondary" onClick={addOp}>
           Ajouter une opération
         </Button>
       </section>
@@ -354,10 +362,6 @@ export function InterventionForm({
       </div>
 
       {!editing && <InvoiceInput />}
-
-      <p className="text-lg font-semibold" data-testid="live-total">
-        Total : {formatCents(total)}
-      </p>
     </ActionForm>
   );
 }

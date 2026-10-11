@@ -1,6 +1,7 @@
 import { Suspense } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { buttonVariants } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Km } from "@/components/km";
 import { interventionCostCents } from "@/domain/costs";
@@ -37,15 +38,15 @@ async function Detail({ params }: { params: Params }) {
   return (
     <>
       <div>
-        <h2 className="font-medium">{formatDate(i.date)}</h2>
-        <p className="text-sm">
+        <h2 className="text-title">{formatDate(i.date)}</h2>
+        <p className="text-body-sm text-ink-muted tabular-nums">
           <Km
             displayedKm={i.displayedKm}
             realKm={realKm(i.date, i.displayedKm, replacements)}
           />{" "}
           · {i.provider}
         </p>
-        {i.notes && <p className="text-muted-foreground text-sm">{i.notes}</p>}
+        {i.notes && <p className="text-body-sm text-ink-muted">{i.notes}</p>}
       </div>
 
       <ul className="flex flex-col gap-3">
@@ -53,9 +54,9 @@ async function Detail({ params }: { params: Params }) {
           <li key={op.id}>
             <Card>
               <CardContent className="flex flex-col gap-1">
-                <p className="font-medium">{op.name}</p>
+                <h3 className="text-heading">{op.name}</h3>
                 {op.detail && <p className="text-sm">{op.detail}</p>}
-                <ul className="text-sm">
+                <ul className="text-body-sm tabular-nums">
                   {op.lines.map((l) => (
                     <li key={l.id} className="flex justify-between gap-2">
                       <span>
@@ -71,29 +72,29 @@ async function Detail({ params }: { params: Params }) {
         ))}
       </ul>
 
-      <p className="flex justify-between text-sm">
+      <p className="flex justify-between text-body-sm tabular-nums">
         <span>Main-d&apos;œuvre</span>
         <span>{formatCents(i.laborCostCents)}</span>
       </p>
-      <p className="flex justify-between font-semibold">
+      <p className="text-figure flex items-baseline justify-between font-heading tabular-nums">
         <span>Total</span>
         <span data-testid="detail-total">{formatCents(total)}</span>
       </p>
-      <p className="text-muted-foreground text-sm">
+      <p className="text-caption text-ink-muted">
         La main-d&apos;œuvre n&apos;est pas ventilée entre les opérations : le
         coût par opération ne porte que sur les pièces.
       </p>
 
-      <section className="flex flex-col gap-2 border-t pt-4">
-        <h2 className="font-medium">Factures</h2>
+      <section className="flex flex-col gap-3 border-t border-line pt-5">
+        <h2 className="text-heading">Factures</h2>
         <ul className="flex flex-col gap-2">
           {i.invoices.length === 0 && (
-            <li className="text-sm">Aucune facture.</li>
+            <li className="text-body-sm text-ink-muted">Aucune facture.</li>
           )}
           {i.invoices.map((f) => (
             <li
               key={f.id}
-              className="flex flex-wrap items-center gap-2 text-sm"
+              className="text-body-sm flex flex-wrap items-center gap-3 rounded-md bg-surface-300 px-4 py-3"
               data-testid={`invoice-${f.id}`}
             >
               <span className="break-all">
@@ -103,11 +104,14 @@ async function Detail({ params }: { params: Params }) {
                 href={`/invoices/${f.id}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="underline"
+                className="font-semibold text-brand underline"
               >
                 Consulter
               </a>
-              <a href={`/invoices/${f.id}?download=1`} className="underline">
+              <a
+                href={`/invoices/${f.id}?download=1`}
+                className="font-semibold text-brand underline"
+              >
                 Télécharger
               </a>
               {!archived && (
@@ -131,7 +135,7 @@ async function Detail({ params }: { params: Params }) {
           <ActionForm
             action={addInvoicesAction}
             submitLabel="Ajouter les factures"
-            variant="outline"
+            variant="secondary"
           >
             <input type="hidden" name="interventionId" value={i.id} />
             <InvoiceInput label="Ajouter des factures (PDF)" />
@@ -140,11 +144,17 @@ async function Detail({ params }: { params: Params }) {
       </section>
 
       {!archived && (
-        <div className="flex gap-4">
-          <Link href={`${base}/edit`} className="underline">
+        <div className="flex gap-3">
+          <Link
+            href={`${base}/edit`}
+            className={buttonVariants({ variant: "outline" })}
+          >
             Modifier
           </Link>
-          <Link href={`${base}/delete`} className="text-destructive underline">
+          <Link
+            href={`${base}/delete`}
+            className={buttonVariants({ variant: "destructive" })}
+          >
             Supprimer
           </Link>
         </div>

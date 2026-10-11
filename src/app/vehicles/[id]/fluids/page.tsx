@@ -40,7 +40,7 @@ async function Fluids({ params }: { params: Promise<{ id: string }> }) {
                     <ActionForm
                       action={updateFluidAction}
                       submitLabel="Enregistrer"
-                      variant="outline"
+                      variant="secondary"
                       size="sm"
                     >
                       <input
@@ -92,8 +92,8 @@ async function Fluids({ params }: { params: Promise<{ id: string }> }) {
         ))}
       </ul>
       {!archived && (
-        <section className="flex flex-col gap-2 border-t pt-4">
-          <h2 className="font-medium">Ajouter un fluide</h2>
+        <section className="flex flex-col gap-3 border-t border-line pt-5">
+          <h2 className="text-heading">Ajouter un fluide</h2>
           <ActionForm action={createFluidAction} submitLabel="Ajouter">
             <input type="hidden" name="vehicleId" value={vehicle.id} />
             <SelectField label="Type" name="type" options={typeOptions} />

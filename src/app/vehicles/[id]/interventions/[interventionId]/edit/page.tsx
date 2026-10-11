@@ -17,7 +17,7 @@ async function EditIntervention({ params }: { params: Params }) {
   for (const op of intervention.ops) types.set(op.operationTypeId, op.name);
   return (
     <>
-      <h2 className="font-medium">Modifier l&apos;intervention</h2>
+      <h2 className="text-heading">Modifier l&apos;intervention</h2>
       <InterventionForm
         vehicleId={vehicle.id}
         interventionId={intervention.id}

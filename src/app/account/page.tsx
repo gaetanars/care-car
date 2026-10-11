@@ -10,9 +10,11 @@ async function Account() {
   const active = getActiveCalendarToken(user.id);
   return (
     <>
-      <p data-testid="account-email">{user.email}</p>
-      <h2 className="font-medium">Flux iCal</h2>
-      <p className="text-muted-foreground text-sm">
+      <p data-testid="account-email" className="text-caption text-ink-muted">
+        {user.email}
+      </p>
+      <h2 className="text-heading">Flux iCal</h2>
+      <p className="text-body-sm text-ink-muted">
         Abonnez Apple Calendar à cette URL pour recevoir les échéances, avec une
         alerte 28 jours avant.
       </p>
@@ -25,8 +27,8 @@ async function Account() {
 
 export default function AccountPage() {
   return (
-    <main className="flex flex-col gap-3 p-4">
-      <h1 className="text-xl font-semibold">Paramètres</h1>
+    <main className="mx-auto flex w-full max-w-2xl flex-col gap-5 px-4 py-6">
+      <h1 className="text-title">Paramètres</h1>
       <Suspense fallback={<p>Chargement…</p>}>
         <Account />
       </Suspense>

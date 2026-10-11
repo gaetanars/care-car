@@ -24,7 +24,7 @@ async function Catalogue() {
   return (
     <>
       <section className="flex flex-col gap-2">
-        <h2 className="font-medium">Ajouter un type d&apos;opération</h2>
+        <h2 className="text-heading">Ajouter un type d&apos;opération</h2>
         <ActionForm action={createOperationTypeAction} submitLabel="Ajouter">
           <Field
             label="Nom"
@@ -48,7 +48,7 @@ async function Catalogue() {
             <li key={t.id}>
               <Card data-testid={`type-${t.name}`}>
                 <CardContent className="flex flex-col gap-3">
-                  <p className="text-muted-foreground text-sm">
+                  <p className="text-ink-muted text-sm">
                     {CATEGORY_LABELS[t.category]}
                     {!t.active && " · Désactivé"}
                     {locked && " · Verrouillé (contrôle technique)"}
@@ -56,7 +56,7 @@ async function Catalogue() {
                   <ActionForm
                     action={updateOperationTypeAction}
                     submitLabel="Enregistrer"
-                    variant="outline"
+                    variant="secondary"
                     size="sm"
                   >
                     <input type="hidden" name="operationTypeId" value={t.id} />
@@ -93,7 +93,7 @@ async function Catalogue() {
                           name="active"
                           value={t.active ? "0" : "1"}
                         />
-                        <Button type="submit" variant="outline" size="sm">
+                        <Button type="submit" variant="secondary" size="sm">
                           {t.active ? "Désactiver" : "Réactiver"}
                         </Button>
                       </form>

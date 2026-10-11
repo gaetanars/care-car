@@ -17,7 +17,7 @@ async function NewIntervention({
   const types = listOperationTypes();
   return (
     <>
-      <h2 className="font-medium">Nouvelle intervention</h2>
+      <h2 className="text-heading">Nouvelle intervention</h2>
       <InterventionForm
         vehicleId={vehicle.id}
         operationTypes={types.map((t) => ({ id: t.id, name: t.name }))}

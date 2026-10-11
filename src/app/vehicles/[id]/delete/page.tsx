@@ -9,7 +9,7 @@ async function DeleteVehicle({ params }: { params: Promise<{ id: string }> }) {
   const { vehicle } = await loadVehicle(params);
   return (
     <>
-      <h2 className="font-medium">Supprimer le véhicule</h2>
+      <h2 className="text-heading">Supprimer le véhicule</h2>
       <p className="text-sm">
         Cette action est définitive : le véhicule, ses interventions, factures,
         relevés, pièces et fluides seront supprimés. Pour le garder en lecture

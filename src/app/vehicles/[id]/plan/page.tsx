@@ -40,7 +40,7 @@ async function Plan({ params }: { params: Promise<{ id: string }> }) {
                     <ActionForm
                       action={updatePlanItemAction}
                       submitLabel="Enregistrer"
-                      variant="outline"
+                      variant="secondary"
                       size="sm"
                     >
                       <input
@@ -95,8 +95,8 @@ async function Plan({ params }: { params: Promise<{ id: string }> }) {
         ))}
       </ul>
       {!archived && (
-        <section className="flex flex-col gap-2 border-t pt-4">
-          <h2 className="font-medium">Ajouter une ligne</h2>
+        <section className="flex flex-col gap-3 border-t border-line pt-5">
+          <h2 className="text-heading">Ajouter une ligne</h2>
           <ActionForm action={addPlanItemAction} submitLabel="Ajouter">
             <input type="hidden" name="vehicleId" value={vehicle.id} />
             <SelectField

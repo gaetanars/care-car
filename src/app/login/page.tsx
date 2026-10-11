@@ -1,5 +1,6 @@
 import { Suspense } from "react";
 import { redirect } from "next/navigation";
+import { Banner } from "@/components/banner";
 import { getAllowedUser } from "@/server/auth/session";
 import { SignInButton } from "./sign-in-button";
 
@@ -15,11 +16,11 @@ async function LoginForm({
   return (
     <>
       {error && (
-        <p role="alert" className="text-destructive">
+        <Banner tone="late" role="alert" title="Connexion refusée">
           {REFUSED.includes(error)
             ? "Cette adresse n'est pas autorisée. Demandez à l'administrateur de l'ajouter."
             : "La connexion a échoué. Réessayez."}
-        </p>
+        </Banner>
       )}
       <SignInButton />
     </>
@@ -32,9 +33,9 @@ export default function LoginPage({
   searchParams: Promise<{ error?: string }>;
 }) {
   return (
-    <main className="mx-auto flex max-w-sm flex-col gap-4 p-4">
-      <h1 className="text-xl font-semibold">care-car</h1>
-      <p className="text-muted-foreground">Carnet d&apos;entretien véhicules</p>
+    <main className="mx-auto flex w-full max-w-sm flex-col gap-4 px-4 py-10">
+      <h1 className="text-display">CareCar</h1>
+      <p className="text-ink-muted">Carnet d&apos;entretien véhicules</p>
       <Suspense fallback={<p>Chargement…</p>}>
         <LoginForm searchParams={searchParams} />
       </Suspense>

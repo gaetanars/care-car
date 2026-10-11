@@ -54,7 +54,7 @@ async function Plans() {
                         <ActionForm
                           action={updatePlanTemplateItemAction}
                           submitLabel="Enregistrer"
-                          variant="outline"
+                          variant="secondary"
                           size="sm"
                         >
                           <input type="hidden" name="itemId" value={item.id} />

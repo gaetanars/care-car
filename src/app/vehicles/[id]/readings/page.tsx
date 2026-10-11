@@ -29,8 +29,8 @@ async function Readings({ params }: { params: Promise<{ id: string }> }) {
   return (
     <>
       {!archived && (
-        <section className="flex flex-col gap-2">
-          <h2 className="font-medium">Nouveau relevé</h2>
+        <section className="flex flex-col gap-3">
+          <h2 className="text-heading">Nouveau relevé</h2>
           <ActionForm action={addReadingAction} submitLabel="Ajouter le relevé">
             {hidden}
             <Field
@@ -53,15 +53,15 @@ async function Readings({ params }: { params: Promise<{ id: string }> }) {
         </section>
       )}
 
-      <section className="flex flex-col gap-2">
-        <h2 className="font-medium">Relevés</h2>
+      <section className="flex flex-col gap-3">
+        <h2 className="text-heading">Relevés</h2>
         <ul className="flex flex-col gap-2">
           {readings.length === 0 && <li>Aucun relevé.</li>}
           {readings.map((r) => (
             <li key={r.id}>
-              <Card data-testid={`reading-${r.id}`}>
+              <Card size="sm" data-testid={`reading-${r.id}`}>
                 <CardContent className="flex items-center justify-between gap-2">
-                  <span>
+                  <span className="tabular-nums">
                     {formatDate(r.date)} ·{" "}
                     <Km
                       displayedKm={r.displayedKm}
@@ -89,15 +89,15 @@ async function Readings({ params }: { params: Promise<{ id: string }> }) {
         </ul>
       </section>
 
-      <section className="flex flex-col gap-2 border-t pt-4">
-        <h2 className="font-medium">Changements de compteur</h2>
+      <section className="flex flex-col gap-3 border-t border-line pt-5">
+        <h2 className="text-heading">Changements de compteur</h2>
         <ul className="flex flex-col gap-2">
           {replacements.length === 0 && <li>Aucun changement de compteur.</li>}
           {replacements.map((c) => (
             <li key={c.id}>
-              <Card data-testid={`replacement-${c.id}`}>
+              <Card size="sm" data-testid={`replacement-${c.id}`}>
                 <CardContent className="flex items-center justify-between gap-2">
-                  <span>
+                  <span className="tabular-nums">
                     {formatDate(c.date)} · {number.format(c.oldCounterKm)} km →{" "}
                     {number.format(c.newCounterKm)} km
                   </span>
@@ -124,7 +124,7 @@ async function Readings({ params }: { params: Promise<{ id: string }> }) {
           <ActionForm
             action={addReplacementAction}
             submitLabel="Ajouter le changement"
-            variant="outline"
+            variant="secondary"
           >
             {hidden}
             <Field

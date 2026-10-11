@@ -5,15 +5,17 @@ const REFUSAL = "Cette adresse n'est pas autorisée";
 for (const error of ["signup_disabled", "not_allowed"]) {
   test(`login shows the refusal for ?error=${error}`, async ({ page }) => {
     await page.goto(`/login?error=${error}`);
-    await expect(page.locator("p[role=alert]")).toContainText(REFUSAL);
+    await expect(
+      page.getByRole("alert").filter({ hasText: "Connexion refusée" }),
+    ).toContainText(REFUSAL);
   });
 }
 
 test("login shows a generic message for other errors", async ({ page }) => {
   await page.goto("/login?error=boom");
-  await expect(page.locator("p[role=alert]")).toContainText(
-    "La connexion a échoué",
-  );
+  await expect(
+    page.getByRole("alert").filter({ hasText: "Connexion refusée" }),
+  ).toContainText("La connexion a échoué");
 });
 
 test.describe("session of a removed user", () => {

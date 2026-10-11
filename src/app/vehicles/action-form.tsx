@@ -8,6 +8,7 @@ import {
   useState,
   type ReactNode,
 } from "react";
+import { Banner } from "@/components/banner";
 import { Button } from "@/components/ui/button";
 
 /** `warning`: non-blocking, resubmit with `confirmMileage=1` to confirm (SPEC §7). */
@@ -25,14 +26,17 @@ export function ActionForm({
   submitLabel,
   variant = "default",
   size = "default",
-  className = "flex flex-col gap-3",
+  className = "flex flex-col gap-4",
+  total,
   children,
 }: {
   action: (state: FormState, formData: FormData) => Promise<FormState>;
   submitLabel: string;
-  variant?: "default" | "outline" | "destructive";
+  variant?: "default" | "outline" | "secondary" | "destructive";
   size?: "default" | "sm";
   className?: string;
+  /** Sticky total bar shown with the submit button (intervention form). */
+  total?: ReactNode;
   children?: ReactNode;
 }) {
   const [state, dispatch, pending] = useActionState(action, INITIAL);
@@ -70,23 +74,44 @@ export function ActionForm({
       }}
     >
       {children}
-      {state.error && (
-        <p role="alert" className="text-destructive text-sm">
-          {state.error}
-        </p>
-      )}
+      {state.error && <Banner tone="late" role="alert" title={state.error} />}
       {warning && (
-        <div role="alert" className="flex flex-col gap-2 text-sm">
-          <p>{warning}</p>
-          <label className="flex items-center gap-2">
-            <input type="checkbox" name="confirmMileage" value="1" required />
+        <Banner tone="warn" role="alert" title={warning}>
+          <label className="mt-2 flex min-h-11 items-center gap-3 font-semibold">
+            <input
+              type="checkbox"
+              name="confirmMileage"
+              value="1"
+              required
+              className="size-[22px] accent-brand"
+            />
             Je confirme ce kilométrage
           </label>
-        </div>
+        </Banner>
       )}
-      <Button type="submit" variant={variant} size={size} disabled={pending}>
-        {submitLabel}
-      </Button>
+      {total ? (
+        <div className="sticky bottom-24 z-30 flex items-center justify-between gap-4 rounded-lg bg-surface-200 px-4 py-3 shadow-lift min-[900px]:bottom-4">
+          {total}
+          <Button
+            type="submit"
+            variant={variant}
+            size={size}
+            disabled={pending}
+          >
+            {submitLabel}
+          </Button>
+        </div>
+      ) : (
+        <Button
+          type="submit"
+          variant={variant}
+          size={size}
+          disabled={pending}
+          className="w-full sm:w-auto sm:self-start"
+        >
+          {submitLabel}
+        </Button>
+      )}
     </form>
   );
 }
