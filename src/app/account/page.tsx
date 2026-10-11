@@ -1,10 +1,8 @@
 import { Suspense } from "react";
-import { redirect } from "next/navigation";
-import { getAllowedUser } from "@/server/auth/session";
+import { requireUser } from "@/server/auth/session";
 
 async function Account() {
-  const user = await getAllowedUser();
-  if (!user) redirect("/");
+  const user = await requireUser();
   return <p data-testid="account-email">{user.email}</p>;
 }
 

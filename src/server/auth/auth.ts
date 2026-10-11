@@ -1,7 +1,9 @@
 import "server-only";
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
+import { APIError } from "better-auth/api";
 import { authStore } from "@/server/data/auth-store";
+import { isUserAllowed } from "@/server/data/users";
 
 function build() {
   const { db, schema } = authStore();
@@ -13,6 +15,28 @@ function build() {
       google: {
         clientId: process.env.GOOGLE_CLIENT_ID ?? "",
         clientSecret: process.env.GOOGLE_CLIENT_SECRET ?? "",
+        // Unknown email → `?error=signup_disabled`: only the admin creates user rows (SPEC §4).
+        disableSignUp: true,
+      },
+    },
+    account: {
+      // No local sign-up exists (the admin pre-registers rows), so Google's verified email
+      // is enough to link to a pre-registered row.
+      accountLinking: {
+        requireLocalEmailVerified: false,
+        updateUserInfoOnLink: true,
+      },
+    },
+    onAPIError: { errorURL: `${process.env.APP_URL}/login` },
+    databaseHooks: {
+      session: {
+        create: {
+          before: async (newSession) => {
+            if (!isUserAllowed(newSession.userId)) {
+              throw new APIError("FORBIDDEN", { code: "not_allowed" });
+            }
+          },
+        },
       },
     },
     user: {

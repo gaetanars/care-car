@@ -13,8 +13,11 @@ Critères communs à chaque jalon : `pnpm check` vert, E2E des parcours touchés
   - À migrer : colonne `operation_type.code` (nullable, unique ; `controle_technique | contre_visite_ct`), requise par le moteur (SPEC §5, §14 #10).
   - Dépendance : `seed/catalogue.json` suppose l'export Numbers (§14 #7). En attendant, catalogue minimal **provisoire** (contrôle technique, contre-visite, vidange ; plans = CT seul), à remplacer par l'export Numbers.
   - Fonctions d'accès des entités filles (fluides, pièces, relevés, interventions, factures) ajoutées aux jalons 4–5.
-- [ ] **3. Auth, liste blanche, admin** (§4, §13.6)
+- [x] **3. Auth, liste blanche, admin** (§4, §13.6)
   - Sortie : connexion Google, `ADMIN_EMAIL` inscrit d'office, retrait = sessions supprimées, gestion de la liste blanche.
+  - Reste à valider à la main (client OAuth réel, non testable en E2E) : connexion de `ADMIN_EMAIL`, refus d'un email inconnu, lien d'un email pré-inscrit, retrait = déconnexion immédiate.
+  - Reporté : écran Admin du catalogue et des plans types (§2.1, §4) — à rattacher à un jalon ; dépend de l'export Numbers (jalon 10) pour le contenu.
+  - À trancher (§4) : retrait de l'admin `ADMIN_EMAIL` — il est réinscrit à chaque démarrage.
 - [ ] **4. Véhicules, plan, fluides, pièces** (§6.6, §7)
   - Sortie : actions serveur validant les entrées (zod : dates ISO `YYYY-MM-DD`, chaînes non vides, montants entiers ≥ 0) avant d'appeler `src/server/data`, qui ne valide pas (CHECK en base pour les énumérations seulement).
 - [ ] **5. Relevés, interventions, factures** (§6.1, §8)

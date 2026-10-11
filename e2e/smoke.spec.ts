@@ -8,7 +8,7 @@ test("GET /api/health is ok", async ({ request }) => {
 
 test("protected page redirects when signed out", async ({ page }) => {
   await page.goto("/account");
-  await expect(page).toHaveURL("/");
+  await expect(page).toHaveURL("/login");
 });
 
 test("protected page is reachable with an injected session", async ({
@@ -17,4 +17,11 @@ test("protected page is reachable with an injected session", async ({
 }) => {
   await page.goto("/account");
   await expect(page.getByTestId("account-email")).toHaveText(signedIn.email);
+});
+
+test("home offers the Google sign-in when signed out", async ({ page }) => {
+  await page.goto("/");
+  await expect(
+    page.getByRole("button", { name: "Se connecter avec Google" }),
+  ).toBeVisible();
 });
