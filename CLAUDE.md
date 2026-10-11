@@ -35,7 +35,7 @@ Suivi : `docs/ROADMAP.md` (jalons, critères de sortie). Un jalon se réalise av
 ## Conventions
 
 - Interface en français uniquement, glossaire §3. Identifiants de code en anglais, alignés sur §5.
-- Catalogue et plans types : `seed/catalogue.json` (à rédiger depuis l'export Numbers).
+- Catalogue et plans types : `seed/catalogue.json` (rédigé depuis l'export Numbers).
 - Secrets uniquement en variables d'environnement (`.env.example` liste les noms), jamais dans le dépôt.
 - pnpm uniquement. Commits Conventional Commits en anglais ; aucun push ni PR sans accord.
 
@@ -48,7 +48,6 @@ Suivi : `docs/ROADMAP.md` (jalons, critères de sortie). Un jalon se réalise av
 
 ## Pièges
 
-- Import CSV (§12) : format indéfini tant que l'export Numbers n'est pas fourni. Dernier jalon, ne pas le deviner.
 - Cette version de Next diffère de l'entraînement du modèle : lire `node_modules/next/dist/docs/` (voir `.claude/rules/nextjs.md`).
 - Point ouvert ou ambigu du SPEC : s'arrêter et poser la question, ne pas trancher seul.
 - Une correction qui se répète devient une règle dans `.claude/rules/` ou une règle lint, pas une mémoire auto.

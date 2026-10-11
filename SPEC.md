@@ -26,7 +26,6 @@ plan d'entretien périodique, journal des interventions avec coûts et factures,
 - Flux iCal des échéances par utilisateur
 - Export PDF du carnet avec factures agrégées
 - Analytique : fréquence et coûts
-- Import CSV de l'existant
 
 ### 2.2 Hors périmètre V1
 
@@ -210,7 +209,7 @@ Conception mobile d'abord. Toutes les saisies doivent être réalisables d'une m
 | **Saisie d'une intervention** | Date, km affiché, prestataire (saisie libre avec suggestion des prestataires déjà utilisés, « Moi-même » proposé), notes. N opérations : type (catalogue), détail, lignes de pièces (pièce de la banque ou libellé libre, quantité, montant). MO. Factures (sélection de fichiers ou appareil photo). Total calculé en direct. |
 | **Saisie rapide d'un relevé** | Date (défaut : aujourd'hui) et km, accessible en un geste depuis le tableau de bord et la fiche véhicule. |
 | **Analyse globale** | Analytique tous véhicules (§11). |
-| **Paramètres** | URL du flux iCal (copie, régénération), import CSV. |
+| **Paramètres** | URL du flux iCal (copie, régénération). |
 | **Admin** | Liste blanche, catalogue des types d'opérations, plans types par énergie. |
 | **Véhicules archivés** | Liste en lecture seule, export PDF disponible, désarchivage possible. |
 
@@ -267,11 +266,9 @@ Filtres : véhicule (ou tous), période (année, plage de dates), catégorie d'o
 | Fréquence | Nombre d'occurrences par type d'opération et par véhicule, chronologie des interventions |
 | Kilométrage | Courbe des points kilométriques réels, km/an |
 
-## 12. Import CSV de l'existant
+## 12. Reprise de l'existant
 
-- Fonction d'import par véhicule, depuis l'écran Paramètres : véhicule, relevés, interventions, opérations, montants, pièces de référence.
-- **Prérequis : fournir un export CSV de l'existant (tableur Numbers, 3 véhicules).** Le format d'import exact (colonnes, séparateur, format des dates et montants, correspondance des types d'opérations) sera défini à partir de cet export.
-- L'import est transactionnel (tout ou rien) et produit un rapport des lignes rejetées avec leur motif.
+Saisie manuelle dans l'interface, pas de fonction d'import (3 véhicules, sans montants : voir §14 #8).
 
 ## 13. Architecture technique
 
@@ -340,7 +337,7 @@ Aucune tâche planifiée ni worker en V1 : échéances, statuts et flux iCal son
 | 4 | Contre-visite CT | Sans effet sur l'échéance, seule la visite initiale compte (§6.5) |
 | 5 | Coût par catégorie | Pièces par catégorie, MO en ligne séparée non ventilée (§11) |
 | 6 | Session et révocation | Liste blanche vérifiée à chaque requête, sessions supprimées au retrait, 30 jours glissants (§13.6) |
-| 7 | Catalogue et plans types initiaux | Hors spec : fichier `seed/catalogue.json`, rédigé à partir de l'export Numbers (thermique). Hybride et électrique : version générique à valider. |
-| 8 | Format d'import CSV | Reste à définir à réception de l'export (§12). Dernier jalon de réalisation. |
+| 7 | Catalogue et plans types initiaux | Hors spec : fichier `seed/catalogue.json`, rédigé à partir de l'export Numbers. Plan électrique tiré de la e-2008 ; plan hybride = copie du plan essence. |
+| 8 | Import CSV de l'existant | Abandonné : l'export ne contient aucun montant et ne permet pas de créer un véhicule seul ; reprise par saisie manuelle de 3 véhicules (§12). |
 | 9 | `VALARM` | Client cible Apple Calendar : `VALARM` conservé, pas de second événement (§9) |
 | 10 | Code des types d'opération | Colonne `operation_type.code` (nullable, unique) : le moteur identifie le CT par ce code, jamais par id ni nom. Ajout de mois ramené au dernier jour du mois cible. Date projetée en arrondi bas, sans borne. km/jour ≤ 0 ⇒ pas de projection (§5, §6.2, §6.3, §6.5). |

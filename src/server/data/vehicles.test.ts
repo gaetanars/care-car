@@ -7,6 +7,7 @@ vi.mock("@/server/db/client", async (importOriginal) => ({
   getDb: () => holder.db,
 }));
 
+import catalogueJson from "../../../seed/catalogue.json";
 import { seedCatalogue } from "./catalogue";
 import { operationType } from "@/server/db/schema";
 import {
@@ -32,6 +33,9 @@ const input = {
   vin: null,
 };
 
+// Plan length of `input` (essence); "Pneumatiques" is in no plan.
+const essencePlanSize = catalogueJson.planTemplates.find((t) => t.energy === "essence")!.items.length;
+
 let db: TestDb;
 let a: string;
 let b: string;
@@ -49,8 +53,8 @@ beforeEach(() => {
 describe("createVehicle", () => {
   it("copies the energy plan, CT baseline since registration", () => {
     const items = listPlanItems(a, vehicleId);
-    expect(items).toHaveLength(1);
-    expect(items[0]).toMatchObject({
+    expect(items).toHaveLength(essencePlanSize);
+    expect(items.find((i) => i.operationTypeCode === "controle_technique")).toMatchObject({
       intervalMonths: 24,
       intervalKm: null,
       baseline: "since_registration",
@@ -87,7 +91,7 @@ describe("owner isolation", () => {
   it("deleteVehicle refuses another owner and leaves the row intact", () => {
     expect(deleteVehicle(b, vehicleId)).toBe(false);
     expect(getVehicle(a, vehicleId)).not.toBeNull();
-    expect(listPlanItems(a, vehicleId)).toHaveLength(1);
+    expect(listPlanItems(a, vehicleId)).toHaveLength(essencePlanSize);
   });
 
   it("listPlanItems is empty for another owner", () => {
@@ -120,12 +124,12 @@ const details = {
   vin: "VF3XXXXXXXXXXXXXX",
 };
 
-function oilChangeId() {
+function unplannedTypeId() {
   return db
     .select()
     .from(operationType)
     .all()
-    .find((t) => t.name === "Vidange")!.id;
+    .find((t) => t.name === "Pneumatiques")!.id;
 }
 
 describe("updateVehicle", () => {
@@ -148,7 +152,7 @@ describe("updateVehicle", () => {
 
 describe("plan items", () => {
   it("lists the operation type name and code", () => {
-    expect(listPlanItems(a, vehicleId)[0]).toMatchObject({
+    expect(listPlanItems(a, vehicleId).find((i) => i.operationTypeCode === "controle_technique")).toMatchObject({
       operationTypeName: "Contrôle technique",
       operationTypeCode: "controle_technique",
     });
@@ -156,21 +160,21 @@ describe("plan items", () => {
 
   it("adds a line with an unknown baseline", () => {
     expect(
-      addPlanItem(a, vehicleId, { operationTypeId: oilChangeId(), intervalKm: 15000, intervalMonths: 12 }),
+      addPlanItem(a, vehicleId, { operationTypeId: unplannedTypeId(), intervalKm: 15000, intervalMonths: 12 }),
     ).toBe("added");
-    const added = listPlanItems(a, vehicleId).find((i) => i.operationTypeId === oilChangeId());
+    const added = listPlanItems(a, vehicleId).find((i) => i.operationTypeId === unplannedTypeId());
     expect(added).toMatchObject({ intervalKm: 15000, baseline: "unknown" });
   });
 
   it("refuses a duplicate operation type", () => {
-    const input = { operationTypeId: oilChangeId(), intervalKm: 15000, intervalMonths: null };
+    const input = { operationTypeId: unplannedTypeId(), intervalKm: 15000, intervalMonths: null };
     addPlanItem(a, vehicleId, input);
     expect(addPlanItem(a, vehicleId, input)).toBe("duplicate");
-    expect(listPlanItems(a, vehicleId)).toHaveLength(2);
+    expect(listPlanItems(a, vehicleId)).toHaveLength(essencePlanSize + 1);
   });
 
   it("refuses an inactive or unknown operation type", () => {
-    const id = oilChangeId();
+    const id = unplannedTypeId();
     db.update(operationType).set({ active: false }).run();
     const input = { intervalKm: 1, intervalMonths: null };
     expect(addPlanItem(a, vehicleId, { ...input, operationTypeId: id })).toBe("not_found");
@@ -186,15 +190,15 @@ describe("plan items", () => {
     expect(
       addPlanItem(a, vehicleId, { operationTypeId: id, intervalKm: null, intervalMonths: 1 }),
     ).toBe("not_found");
-    expect(listPlanItems(a, vehicleId)).toHaveLength(1);
+    expect(listPlanItems(a, vehicleId)).toHaveLength(essencePlanSize);
   });
 
   it("refuses another owner and an archived vehicle", () => {
-    const input = { operationTypeId: oilChangeId(), intervalKm: 1, intervalMonths: null };
+    const input = { operationTypeId: unplannedTypeId(), intervalKm: 1, intervalMonths: null };
     expect(addPlanItem(b, vehicleId, input)).toBe("not_found");
     archiveVehicle(a, vehicleId, { archivedAt: "2024-01-01", reason: null });
     expect(addPlanItem(a, vehicleId, input)).toBe("not_found");
-    expect(listPlanItems(a, vehicleId)).toHaveLength(1);
+    expect(listPlanItems(a, vehicleId)).toHaveLength(essencePlanSize);
   });
 
   it("updates and deletes for the owner only", () => {
@@ -202,11 +206,14 @@ describe("plan items", () => {
     const values = { intervalKm: 40000, intervalMonths: null, baseline: "unknown" as const };
     expect(updatePlanItem(b, item!.id, values)).toBe(false);
     expect(deletePlanItem(b, item!.id)).toBe(false);
-    expect(listPlanItems(a, vehicleId)[0]).toMatchObject({ intervalMonths: 24 });
+    const find = () => listPlanItems(a, vehicleId).find((i) => i.id === item!.id);
+    const before = find();
     expect(updatePlanItem(a, item!.id, values)).toBe(true);
-    expect(listPlanItems(a, vehicleId)[0]).toMatchObject({ intervalKm: 40000, baseline: "unknown" });
+    expect(find()).toMatchObject({ intervalKm: 40000, intervalMonths: null, baseline: "unknown" });
+    expect(before).not.toMatchObject({ intervalKm: 40000, baseline: "unknown" });
     expect(deletePlanItem(a, item!.id)).toBe(true);
-    expect(listPlanItems(a, vehicleId)).toEqual([]);
+    expect(find()).toBeUndefined();
+    expect(listPlanItems(a, vehicleId)).toHaveLength(essencePlanSize - 1);
   });
 
   it("refuses update and delete on an archived vehicle", () => {
@@ -214,6 +221,6 @@ describe("plan items", () => {
     archiveVehicle(a, vehicleId, { archivedAt: "2024-01-01", reason: null });
     expect(updatePlanItem(a, item!.id, { intervalKm: 1, intervalMonths: null, baseline: "unknown" })).toBe(false);
     expect(deletePlanItem(a, item!.id)).toBe(false);
-    expect(listPlanItems(a, vehicleId)).toHaveLength(1);
+    expect(listPlanItems(a, vehicleId)).toHaveLength(essencePlanSize);
   });
 });

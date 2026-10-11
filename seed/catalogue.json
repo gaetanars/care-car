@@ -14,6 +14,76 @@
       "code": null,
       "name": "Vidange",
       "category": "entretien"
+    },
+    {
+      "code": null,
+      "name": "Filtre à air",
+      "category": "entretien"
+    },
+    {
+      "code": null,
+      "name": "Filtre habitacle",
+      "category": "entretien"
+    },
+    {
+      "code": null,
+      "name": "Filtre à carburant",
+      "category": "entretien"
+    },
+    {
+      "code": null,
+      "name": "Bougies",
+      "category": "entretien"
+    },
+    {
+      "code": null,
+      "name": "Vidange liquide de refroidissement",
+      "category": "entretien"
+    },
+    {
+      "code": null,
+      "name": "Purge liquide de frein",
+      "category": "entretien"
+    },
+    {
+      "code": null,
+      "name": "Courroie de distribution",
+      "category": "entretien"
+    },
+    {
+      "code": null,
+      "name": "Courroie d'accessoires",
+      "category": "entretien"
+    },
+    {
+      "code": null,
+      "name": "Vidange boîte de vitesses",
+      "category": "entretien"
+    },
+    {
+      "code": null,
+      "name": "Freinage",
+      "category": "reparation"
+    },
+    {
+      "code": null,
+      "name": "Pneumatiques",
+      "category": "reparation"
+    },
+    {
+      "code": null,
+      "name": "Liaison au sol",
+      "category": "reparation"
+    },
+    {
+      "code": null,
+      "name": "Dépollution",
+      "category": "reparation"
+    },
+    {
+      "code": null,
+      "name": "Transmission",
+      "category": "reparation"
     }
   ],
   "planTemplates": [
@@ -24,6 +94,41 @@
           "operationType": "Contrôle technique",
           "intervalKm": null,
           "intervalMonths": 24
+        },
+        {
+          "operationType": "Vidange",
+          "intervalKm": 20000,
+          "intervalMonths": 24
+        },
+        {
+          "operationType": "Filtre à air",
+          "intervalKm": 40000,
+          "intervalMonths": 48
+        },
+        {
+          "operationType": "Bougies",
+          "intervalKm": 60000,
+          "intervalMonths": 48
+        },
+        {
+          "operationType": "Vidange liquide de refroidissement",
+          "intervalKm": null,
+          "intervalMonths": 48
+        },
+        {
+          "operationType": "Purge liquide de frein",
+          "intervalKm": null,
+          "intervalMonths": 24
+        },
+        {
+          "operationType": "Courroie de distribution",
+          "intervalKm": 120000,
+          "intervalMonths": 60
+        },
+        {
+          "operationType": "Courroie d'accessoires",
+          "intervalKm": 120000,
+          "intervalMonths": 72
         }
       ]
     },
@@ -34,6 +139,46 @@
           "operationType": "Contrôle technique",
           "intervalKm": null,
           "intervalMonths": 24
+        },
+        {
+          "operationType": "Vidange",
+          "intervalKm": 30000,
+          "intervalMonths": 12
+        },
+        {
+          "operationType": "Filtre à air",
+          "intervalKm": 60000,
+          "intervalMonths": 48
+        },
+        {
+          "operationType": "Filtre habitacle",
+          "intervalKm": 60000,
+          "intervalMonths": 24
+        },
+        {
+          "operationType": "Filtre à carburant",
+          "intervalKm": 60000,
+          "intervalMonths": 48
+        },
+        {
+          "operationType": "Vidange liquide de refroidissement",
+          "intervalKm": null,
+          "intervalMonths": 48
+        },
+        {
+          "operationType": "Purge liquide de frein",
+          "intervalKm": null,
+          "intervalMonths": 24
+        },
+        {
+          "operationType": "Courroie de distribution",
+          "intervalKm": 150000,
+          "intervalMonths": 120
+        },
+        {
+          "operationType": "Courroie d'accessoires",
+          "intervalKm": 120000,
+          "intervalMonths": 72
         }
       ]
     },
@@ -44,6 +189,41 @@
           "operationType": "Contrôle technique",
           "intervalKm": null,
           "intervalMonths": 24
+        },
+        {
+          "operationType": "Vidange",
+          "intervalKm": 20000,
+          "intervalMonths": 24
+        },
+        {
+          "operationType": "Filtre à air",
+          "intervalKm": 40000,
+          "intervalMonths": 48
+        },
+        {
+          "operationType": "Bougies",
+          "intervalKm": 60000,
+          "intervalMonths": 48
+        },
+        {
+          "operationType": "Vidange liquide de refroidissement",
+          "intervalKm": null,
+          "intervalMonths": 48
+        },
+        {
+          "operationType": "Purge liquide de frein",
+          "intervalKm": null,
+          "intervalMonths": 24
+        },
+        {
+          "operationType": "Courroie de distribution",
+          "intervalKm": 120000,
+          "intervalMonths": 60
+        },
+        {
+          "operationType": "Courroie d'accessoires",
+          "intervalKm": 120000,
+          "intervalMonths": 72
         }
       ]
     },
@@ -52,6 +232,16 @@
       "items": [
         {
           "operationType": "Contrôle technique",
+          "intervalKm": null,
+          "intervalMonths": 24
+        },
+        {
+          "operationType": "Filtre habitacle",
+          "intervalKm": 25000,
+          "intervalMonths": 24
+        },
+        {
+          "operationType": "Purge liquide de frein",
           "intervalKm": null,
           "intervalMonths": 24
         }
