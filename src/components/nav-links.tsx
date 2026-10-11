@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { House, Settings, ShieldCheck } from "lucide-react";
+import { ChartColumn, House, Settings, ShieldCheck } from "lucide-react";
 import { cn } from "cn";
 
 /** Main navigation: floating tab bar on mobile, side nav from 900px (design NavBar). */
@@ -10,6 +10,12 @@ export function NavLinks({ isAdmin }: { isAdmin: boolean }) {
   const pathname = usePathname();
   const items = [
     { href: "/", label: "Tableau de bord", short: "Accueil", Icon: House },
+    {
+      href: "/analytics",
+      label: "Analyse",
+      short: "Analyse",
+      Icon: ChartColumn,
+    },
     {
       href: "/account",
       label: "Paramètres",

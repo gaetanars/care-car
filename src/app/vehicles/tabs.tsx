@@ -14,6 +14,7 @@ export function VehicleTabs({ vehicleId }: { vehicleId: number }) {
         { href: `${base}/plan`, label: "Plan d'entretien" },
         { href: `${base}/parts`, label: "Pièces" },
         { href: `${base}/fluids`, label: "Fluides" },
+        { href: `${base}/analytics`, label: "Analyse" },
       ]}
     />
   );

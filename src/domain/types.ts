@@ -27,6 +27,9 @@ export interface Intervention {
   ops: InterventionOp[];
 }
 
+/** `operation_type.category` (SPEC §5). */
+export type Category = "entretien" | "reparation" | "reglementaire";
+
 export type Baseline = "unknown" | "since_registration";
 
 /** `operation_type.code` (SPEC §5). */

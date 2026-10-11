@@ -56,6 +56,11 @@
   --color-sky-ink: var(--sky-ink);
   --color-butter-fill: var(--butter-fill);
   --color-butter-ink: var(--butter-ink);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
 
   /* Rayons : sm champs, md lignes, lg cartes (tokens.json). */
   --radius-sm: 12px;
@@ -113,6 +118,11 @@
   --surface-300: #f2eee8;
   --ink: #26303b;
   --ink-muted: #5b6672;
+  --chart-1: #3f6f73;
+  --chart-2: #7a5aa6;
+  --chart-3: #b7793a;
+  --chart-4: #3b78b5;
+  --chart-5: #8a8f3c;
   --line: #e4ded5;
   --line-strong: #7d8894;
   --brand: #3f6f73;
@@ -165,6 +175,11 @@
     --surface-300: #0f1317;
     --ink: #edf1f5;
     --ink-muted: #a3afbb;
+    --chart-1: #8fcbc6;
+    --chart-2: #b9a3e0;
+    --chart-3: #e0a868;
+    --chart-4: #7db4e6;
+    --chart-5: #c3c76a;
     --line: #2a333d;
     --line-strong: #6b7885;
     --brand: #8fcbc6;
