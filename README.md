@@ -83,6 +83,10 @@ echo $PAT | docker login ghcr.io -u <user> --password-stdin
 docker pull ghcr.io/gaetanars/care-car:latest
 ```
 
+#### Releases
+
+`git tag -a vX.Y.Z -m vX.Y.Z && git push origin vX.Y.Z` déclenche la publication de l'image et la création de la GitHub Release. Les notes sont générées depuis les commits `feat` / `fix` / breaking écoulés depuis le tag précédent (`chore`, `ci` et `docs` sont masqués par le preset).
+
 ### 2. NAS Synology (DSM)
 
 Cible initiale du projet (DS918+, `linux/amd64`).
