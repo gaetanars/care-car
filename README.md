@@ -20,7 +20,7 @@ Auto-hébergé, mobile d'abord, vos données restent chez vous.
 ---
 
 > [!NOTE]
-> **Statut : V1 en cours de réalisation.** Le moteur de règles, le schéma de données et l'authentification sont en place ; les écrans véhicules, interventions, tableau de bord, iCal, export PDF et analytique suivent. Voir [`docs/ROADMAP.md`](docs/ROADMAP.md).
+> **Statut : V1 complète** (v0.1.0). Reste à valider à la main : l'abonnement iCal dans Apple Calendar et l'ouverture d'un carnet PDF réel. La conversion d'images de factures en PDF est reportée. Voir [`docs/ROADMAP.md`](docs/ROADMAP.md).
 
 ## ✨ Fonctionnalités
 
@@ -28,7 +28,7 @@ Auto-hébergé, mobile d'abord, vos données restent chez vous.
 | -------------------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
 | 🔧 **Plan d'entretien**          | Opérations périodiques par véhicule (km et/ou mois), copiées depuis un plan type par énergie puis modifiables.                   |
 | 📅 **Échéances et statuts**      | Calcul automatique, avec **projection kilométrique** quand la date n'est pas fixée. Contrôle technique inclus (48 mois puis 24). |
-| 🧾 **Journal des interventions** | Opérations, pièces, main d'œuvre, prestataire (garage ou « Moi-même »), factures jointes converties en PDF.                      |
+| 🧾 **Journal des interventions** | Opérations, pièces, main d'œuvre, prestataire (garage ou « Moi-même »), factures jointes (PDF uniquement, 10 Mo max).            |
 | 🛣️ **Relevés kilométriques**     | Gestion du changement de compteur : le km _affiché_ est saisi, les calculs utilisent le km _réel_.                               |
 | 🔔 **Flux iCal**                 | Une URL privée par utilisateur à abonner dans Apple Calendar, avec alarme J-28.                                                  |
 | 📄 **Export PDF du carnet**      | Fiche véhicule, historique, totaux et factures agrégées en un seul PDF, prêt pour la revente.                                    |
@@ -102,9 +102,6 @@ Cible initiale du projet (DS918+, `linux/amd64`).
      db.exec(\"VACUUM INTO '/data/backups/care-car-' || strftime('%Y%m%d') || '.db'\");
    "
    ```
-
-   > [!WARNING]
-   > Le nom du fichier de base (`care-car.db` ci-dessus) est à vérifier dans `DATA_DIR` avant de planifier la tâche.
 
 ### 3. Cloud (VM ou conteneur avec volume)
 
