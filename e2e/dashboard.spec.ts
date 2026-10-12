@@ -38,6 +38,16 @@ test("dashboard and summary show the late CT, Saisir un relevé updates the km",
   await expect(page.getByTestId(/^reading-/)).toHaveCount(1);
 
   await page.goto("/");
+  await page
+    .getByTestId(`vehicle-${plate}`)
+    .getByRole("link", { name: "Saisir une intervention" })
+    .click();
+  await expect(page).toHaveURL(`${base}/interventions/new`);
+  await expect(
+    page.getByRole("heading", { name: "Nouvelle intervention" }),
+  ).toBeVisible();
+
+  await page.goto("/");
   await expect(page.getByTestId(`vehicle-${plate}`)).toContainText("42");
   await expect(page.getByTestId(`vehicle-${plate}`)).toContainText("km");
 });

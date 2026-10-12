@@ -92,15 +92,26 @@ async function Home() {
                   </>
                 }
                 action={
-                  <Link
-                    href={`/vehicles/${vehicle.id}/readings`}
-                    className={buttonVariants({
-                      variant: "secondary",
-                      size: "sm",
-                    })}
-                  >
-                    Saisir un relevé
-                  </Link>
+                  <div className="flex flex-wrap gap-2">
+                    <Link
+                      href={`/vehicles/${vehicle.id}/readings`}
+                      className={buttonVariants({
+                        variant: "secondary",
+                        size: "sm",
+                      })}
+                    >
+                      Saisir un relevé
+                    </Link>
+                    <Link
+                      href={`/vehicles/${vehicle.id}/interventions/new`}
+                      className={buttonVariants({
+                        variant: "secondary",
+                        size: "sm",
+                      })}
+                    >
+                      Saisir une intervention
+                    </Link>
+                  </div>
                 }
               />
             </li>

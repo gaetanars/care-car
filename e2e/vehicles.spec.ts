@@ -132,6 +132,9 @@ test("archive hides forms, unarchive restores them", async ({
     0,
   );
   await expect(page.getByText("Vendu")).toBeVisible();
+  await expect(
+    page.getByRole("link", { name: "Saisir une intervention" }),
+  ).toHaveCount(0);
 
   for (const tab of ["plan", "fluids", "parts"]) {
     await page.goto(`${base}/${tab}`);

@@ -21,12 +21,20 @@ async function Header({ params }: { params: Promise<{ id: string }> }) {
           </h1>
         </div>
         {!vehicle.archivedAt && (
-          <Link
-            href={`/vehicles/${vehicle.id}/readings`}
-            className={buttonVariants({ variant: "secondary" })}
-          >
-            Saisir un relevé
-          </Link>
+          <div className="flex flex-wrap gap-2">
+            <Link
+              href={`/vehicles/${vehicle.id}/readings`}
+              className={buttonVariants({ variant: "secondary" })}
+            >
+              Saisir un relevé
+            </Link>
+            <Link
+              href={`/vehicles/${vehicle.id}/interventions/new`}
+              className={buttonVariants({ variant: "secondary" })}
+            >
+              Saisir une intervention
+            </Link>
+          </div>
         )}
       </div>
       {vehicle.archivedAt && (

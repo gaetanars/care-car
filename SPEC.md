@@ -209,7 +209,7 @@ Conception mobile d'abord. Toutes les saisies doivent être réalisables d'une m
 | **Véhicule › Pièces** | Banque de pièces de référence avec URLs fournisseurs (liens cliquables). |
 | **Véhicule › Fluides** | Liste des fluides. |
 | **Véhicule › Analyse** | Analytique du véhicule (§11). |
-| **Saisie d'une intervention** | Date, km affiché, prestataire (saisie libre avec suggestion des prestataires déjà utilisés, « Moi-même » proposé), notes. N opérations : type (catalogue), détail, lignes de pièces (pièce de la banque ou libellé libre, quantité, montant). MO. Factures (sélection de fichiers PDF). Total calculé en direct. |
+| **Saisie d'une intervention** | Date, km affiché, prestataire (saisie libre avec suggestion des prestataires déjà utilisés, « Moi-même » proposé), notes. N opérations : type (catalogue), détail, lignes de pièces (pièce de la banque ou libellé libre, quantité, montant). MO. Factures (sélection de fichiers PDF). Total calculé en direct. Accessible en un geste depuis le tableau de bord et la fiche véhicule (véhicule non archivé). |
 | **Saisie rapide d'un relevé** | Date (défaut : aujourd'hui) et km, accessible en un geste depuis le tableau de bord et la fiche véhicule. |
 | **Analyse globale** | Analytique tous véhicules (§11). |
 | **Paramètres** | URL du flux iCal (affichée et copiable à la génération uniquement, régénération). |

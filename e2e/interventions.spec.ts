@@ -93,7 +93,10 @@ test("intervention: create, invoice, edit, delete removes files", async ({
   await addPart.getByRole("button", { name: "Ajouter", exact: true }).click();
   await expect(page.getByTestId(/^part-/)).toHaveCount(1);
 
-  await open(page, `${base}/interventions/new`);
+  await open(page, base);
+  await page.getByRole("link", { name: "Saisir une intervention" }).click();
+  await expect(page).toHaveURL(`${base}/interventions/new`);
+  await page.waitForLoadState("networkidle");
   await page.getByLabel("Date", { exact: true }).fill("2026-03-01");
   await page.getByLabel("Kilométrage affiché").fill("60000");
   await page.getByLabel("Prestataire").fill("Garage Martin");
