@@ -49,3 +49,4 @@ CLAUDE.local.md
 next-env.d.ts
 /test-results/
 /playwright-report/
+AGENTS.md
