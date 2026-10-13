@@ -1,6 +1,6 @@
 # syntax=docker/dockerfile:1
 # Build for the DS918+: docker buildx build --platform linux/amd64 (SPEC §13.4)
-FROM node:26-slim AS base
+FROM node:26-alpine AS base
 ENV PNPM_HOME=/pnpm PATH=/pnpm:$PATH NEXT_TELEMETRY_DISABLED=1
 RUN npm i -g pnpm@12.11.2
 WORKDIR /app
@@ -12,8 +12,10 @@ RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --frozen-lockfile
 FROM deps AS build
 COPY . .
 RUN pnpm build
+# sharp/libvips are traced by Next but unused (images.unoptimized): ~19 MB saved
+RUN cd .next/standalone/node_modules/.pnpm && rm -rf sharp@* @img+* node_modules/sharp node_modules/@img
 
-FROM node:26-slim AS runner
+FROM node:26-alpine AS runner
 ENV NODE_ENV=production NEXT_TELEMETRY_DISABLED=1 PORT=3000 HOSTNAME=0.0.0.0 DATA_DIR=/data
 WORKDIR /app
 COPY --from=build /app/.next/standalone ./
