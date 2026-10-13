@@ -9,12 +9,22 @@ import * as schema from "./schema";
 
 export type Db = ReturnType<typeof createDb>;
 
-/** Opens a SQLite database (WAL, foreign keys on). `:memory:` is accepted. */
+/**
+ * Opens a SQLite database (WAL, foreign keys on). `:memory:` is accepted.
+ * Transactions are IMMEDIATE: a deferred read-then-write transaction fails at once
+ * with SQLITE_BUSY_SNAPSHOT when another connection writes in between (busy_timeout
+ * cannot help), so take the write lock up front and wait for it instead.
+ */
 export function createDb(path: string) {
   const sqlite = new Database(path);
   sqlite.pragma("journal_mode = WAL");
   sqlite.pragma("foreign_keys = ON");
-  return drizzle(sqlite, { schema });
+  sqlite.pragma("busy_timeout = 5000");
+  const db = drizzle(sqlite, { schema });
+  const transaction = db.transaction.bind(db);
+  db.transaction = (fn, config) =>
+    transaction(fn, { behavior: "immediate", ...config });
+  return db;
 }
 
 export function applyMigrations(
